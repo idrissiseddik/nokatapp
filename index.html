@@ -10,7 +10,6 @@
     <style>
         :root{--primary:#6c5ce7;--bg:#f4f6f9;--card:#fff;--fh:90px;--hh:72px}
         
-        /* ✅ ESPACEMENT CORRIGÉ: padding-top = hauteur header + marge généreuse */
         body{
             background:var(--bg);color:#2d3436;font-family:'Segoe UI',sans-serif;
             padding-top:calc(var(--hh) + 20px);
@@ -31,7 +30,6 @@
         .header-top-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
         .header-logo{font-weight:800;color:var(--primary);font-size:1.1rem;white-space:nowrap;display:flex;align-items:center;gap:8px}
 
-        /* ✅ BOUTON ADMIN DANS HEADER */
         .admin-header-btn{
             background:none;border:2px solid #dfe6e9;color:#b2bec3;
             width:36px;height:36px;border-radius:50%;
@@ -45,7 +43,6 @@
         }
         @keyframes pulseAdmin{0%,100%{box-shadow:0 0 0 0 rgba(255,71,87,.4)}50%{box-shadow:0 0 0 8px rgba(255,71,87,0)}}
 
-        /* Marquee */
         .header-marquee-wrapper{width:100%;overflow:hidden;white-space:nowrap}
         .header-marquee-content{display:inline-block;font-size:.8rem;font-weight:500;color:#636e72;animation:passAndReset 10s linear infinite}
         @keyframes passAndReset{0%{transform:translateX(100vw);opacity:0}3%{opacity:1}90%{transform:translateX(-100%);opacity:1}95%{transform:translateX(-100%);opacity:0}100%{transform:translateX(100vw);opacity:0}}
@@ -67,7 +64,13 @@
 
         /* --- Blagues --- */
         .joke-card{background:var(--card);border-radius:18px;padding:22px;margin-bottom:16px;box-shadow:0 4px 20px rgba(0,0,0,.04);border:1px solid rgba(0,0,0,.03);position:relative}
-        .joke-text{font-size:1.05rem;line-height:1.7;margin-bottom:15px;word-wrap:break-word}
+        .joke-text{
+            font-size:1.05rem;
+            line-height:1.7;
+            margin-bottom:15px;
+            word-wrap:break-word;
+            white-space:pre-wrap;  /* ✅ Conserve les retours à la ligne */
+        }
         .joke-meta{display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px dashed #eee}
         .author-badge{background:#f0efff;color:var(--primary);padding:5px 14px;border-radius:20px;font-size:.85rem;font-weight:600}
         .like-btn{cursor:pointer;padding:8px 16px;border-radius:20px;background:#f8f9fa;user-select:none;transition:all .3s}
@@ -75,12 +78,10 @@
         .like-btn.liked i{animation:heartPop .4s ease}
         @keyframes heartPop{0%{transform:scale(1)}50%{transform:scale(1.4)}100%{transform:scale(1)}}
 
-        /* Bouton Delete Admin */
         .admin-delete-btn{position:absolute;top:12px;right:12px;background:none;border:none;color:#b2bec3;font-size:1rem;cursor:pointer;padding:5px 8px;border-radius:8px;transition:all .2s;display:none}
         .admin-delete-btn:hover{color:#ff4757;background:#ffeef0}
         body.admin-mode .admin-delete-btn{display:block}
 
-        /* ✅ FAB Ajouter - TOUJOURS AU-DESSUS DU FOOTER */
         .fab-add{
             position:fixed;
             bottom:calc(var(--fh) + 20px);
@@ -104,7 +105,6 @@
             box-shadow:0 8px 35px rgba(108,92,231,.6);
         }
 
-        /* ✅ Ajout d'un padding-bottom supplémentaire si besoin */
         .extra-bottom-space{
             height:20px;
         }
@@ -128,11 +128,9 @@
 </head>
 <body>
 
-<!-- ✅ HEADER AVEC BOUTON ADMIN À DROITE -->
 <header class="fixed-header">
     <div class="header-top-row">
         <div class="header-logo"><i class="fa-solid fa-face-laugh-squint"></i> NokatApp</div>
-        <!-- Bouton Admin dans le header -->
         <button class="admin-header-btn" id="adminToggleBtn" onclick="toggleAdminMode()" title="Mode Admin">
             <i class="fa-solid fa-shield-halved"></i>
         </button>
@@ -142,7 +140,6 @@
     </div>
 </header>
 
-<!-- Contenu -->
 <main class="container px-3" id="jokesContainer">
     <div class="loading-spinner" id="loadingState">
         <i class="fa-solid fa-spinner fa-spin fa-2x mb-3"></i>
@@ -152,22 +149,18 @@
         <i class="fa-regular fa-comment-dots fa-3x mb-3 opacity-50"></i>
         <p>Aucune blague pour le moment.<br>Soyez le premier à en ajouter !</p>
     </div>
-    <!-- Espace supplémentaire pour éviter que le contenu ne colle au footer -->
     <div class="extra-bottom-space"></div>
 </main>
 
-<!-- ✅ FAB Ajouter - Positionné au-dessus du footer -->
 <div class="fab-add" onclick="openCustomModal()">
     <i class="fa-solid fa-plus"></i>
 </div>
 
-<!-- Footer avec Sites Amis -->
 <footer class="fixed-footer">
     <div class="footer-credit">Créé par : <strong>M.Seddik ELidrissi</strong></div>
     <div class="site-showcase" id="siteShowcase"></div>
 </footer>
 
-<!-- Modal Ajout Blague -->
 <div class="custom-modal-overlay" id="addJokeModal">
     <div class="custom-modal-content">
         <button class="modal-close-btn" onclick="closeCustomModal()"><i class="fa-solid fa-xmark"></i></button>
@@ -182,7 +175,7 @@
         </div>
         <div class="mb-3">
             <label class="fw-bold small mb-2 d-block"><i class="fa-solid fa-quote-left text-muted me-1"></i> Ta Blague</label>
-            <textarea class="textarea-custom" id="modalJoke" placeholder="Écris ta blague ici"></textarea>
+            <textarea class="textarea-custom" id="modalJoke" placeholder="Écris ta blague ici (appuie sur Entrée pour aller à la ligne)"></textarea>
             <div class="error-msg" id="jokeError">⚠️ La blague doit contenir au moins 10 caractères</div>
         </div>
         <button class="submit-btn-custom" id="submitBtn" onclick="submitJoke()">
@@ -301,7 +294,6 @@ async function toggleLike(id, el) {
     } catch (err) { console.error('Like error:', err); }
 }
 
-// ✅ ADMIN MODE - Bouton maintenant dans le header
 function toggleAdminMode() {
     if (isAdminMode) {
         isAdminMode = false;
@@ -410,7 +402,6 @@ async function submitJoke() {
     }
 }
 
-// Sites Amis avec liens
 const sitesAmis = [
     { name: "راديو القرآن الكريم", url: "https://radiocoran.vercel.app", anim: "anim-slide-up" },
     { name: "تلاوة القرآن الكريم", url: "https://tilawatquran.vercel.app", anim: "anim-zoom" },
