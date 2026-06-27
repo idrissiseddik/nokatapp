@@ -66,10 +66,14 @@
         .joke-card{background:var(--card);border-radius:18px;padding:22px;margin-bottom:16px;box-shadow:0 4px 20px rgba(0,0,0,.04);border:1px solid rgba(0,0,0,.03);position:relative}
         .joke-text{
             font-size:1.05rem;
-            line-height:1.7;
+            line-height:1.8;
             margin-bottom:15px;
             word-wrap:break-word;
-            white-space:pre-wrap;  /* ✅ Conserve les retours à la ligne */
+            white-space:pre-wrap;
+            text-align:justify;        /* ✅ Justification du texte */
+            text-justify:inter-word;   /* ✅ Meilleure justification pour les mots */
+            direction:auto;            /* ✅ Détection automatique RTL/LTR */
+            unicode-bidi:plaintext;    /* ✅ Gestion automatique de l'écriture arabe */
         }
         .joke-meta{display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px dashed #eee}
         .author-badge{background:#f0efff;color:var(--primary);padding:5px 14px;border-radius:20px;font-size:.85rem;font-weight:600}
