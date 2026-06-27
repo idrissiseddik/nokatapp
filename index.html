@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nokat App - M.Seddik ELidrissi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <style>
+        :root{--primary:#6c5ce7;--bg:#f4f6f9;--card:#fff;--fh:90px;--hh:72px}
+        
+        /* ✅ ESPACEMENT CORRIGÉ: padding-top = hauteur header + marge généreuse */
+        body{
+            background:var(--bg);color:#2d3436;font-family:'Segoe UI',sans-serif;
+            padding-top:calc(var(--hh) + 20px);
+            padding-bottom:calc(var(--fh) + 20px);
+            overflow-x:hidden;
+            min-height:100vh;
+        }
+
+        /* --- Header Fixe --- */
+        .fixed-header{
+            position:fixed;top:0;left:0;width:100%;z-index:1000;
+            background:rgba(255,255,255,.98);backdrop-filter:blur(12px);
+            box-shadow:0 2px 15px rgba(0,0,0,.05);
+            height:var(--hh);
+            display:flex;flex-direction:column;justify-content:center;
+            padding:0 15px;
+        }
+        .header-top-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
+        .header-logo{font-weight:800;color:var(--primary);font-size:1.1rem;white-space:nowrap;display:flex;align-items:center;gap:8px}
+
+        /* ✅ BOUTON ADMIN DANS HEADER */
+        .admin-header-btn{
+            background:none;border:2px solid #dfe6e9;color:#b2bec3;
+            width:36px;height:36px;border-radius:50%;
+            display:flex;align-items:center;justify-content:center;
+            font-size:.9rem;cursor:pointer;transition:all .3s;flex-shrink:0;
+        }
+        .admin-header-btn:hover{border-color:var(--primary);color:var(--primary)}
+        .admin-header-btn.active{
+            background:#ff4757;border-color:#ff4757;color:#fff;
+            animation:pulseAdmin 1.5s infinite;
+        }
+        @keyframes pulseAdmin{0%,100%{box-shadow:0 0 0 0 rgba(255,71,87,.4)}50%{box-shadow:0 0 0 8px rgba(255,71,87,0)}}
+
+        /* Marquee */
+        .header-marquee-wrapper{width:100%;overflow:hidden;white-space:nowrap}
+        .header-marquee-content{display:inline-block;font-size:.8rem;font-weight:500;color:#636e72;animation:passAndReset 10s linear infinite}
+        @keyframes passAndReset{0%{transform:translateX(100vw);opacity:0}3%{opacity:1}90%{transform:translateX(-100%);opacity:1}95%{transform:translateX(-100%);opacity:0}100%{transform:translateX(100vw);opacity:0}}
+
+        /* --- Footer & Sites Amis --- */
+        .fixed-footer{position:fixed;bottom:0;left:0;width:100%;z-index:1000;background:#1e272e;color:#fff;height:var(--fh);display:flex;flex-direction:column;justify-content:center;box-shadow:0 -4px 20px rgba(0,0,0,.15)}
+        .footer-credit{font-size:.7rem;text-align:center;opacity:.7;padding:4px 0}
+        .site-showcase{flex:1;display:flex;align-items:center;justify-content:center;perspective:1000px;overflow:hidden;position:relative}
+        .site-item-animated{font-size:1.1rem;font-weight:600;color:#dfe6e9;text-decoration:none;position:absolute;opacity:0;pointer-events:auto;letter-spacing:.5px;cursor:pointer;transition:color .3s}
+        .site-item-animated:hover{color:#a29bfe}
+        .anim-slide-up.enter{animation:slideUpIn .6s cubic-bezier(.34,1.56,.64,1) forwards}.anim-slide-up.exit{animation:slideUpOut .4s ease-in forwards}
+        @keyframes slideUpIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}@keyframes slideUpOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-20px)}}
+        .anim-zoom.enter{animation:zoomIn .7s cubic-bezier(.175,.885,.32,1.275) forwards}.anim-zoom.exit{animation:zoomOut .3s ease-in forwards}
+        @keyframes zoomIn{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:scale(1)}}@keyframes zoomOut{from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(1.5)}}
+        .anim-flip.enter{animation:flipIn .8s ease-out forwards}.anim-flip.exit{animation:flipOut .4s ease-in forwards}
+        @keyframes flipIn{from{opacity:0;transform:rotateY(90deg)}to{opacity:1;transform:rotateY(0)}}@keyframes flipOut{from{opacity:1;transform:rotateY(0)}to{opacity:0;transform:rotateY(-90deg)}}
+        .anim-fade.enter{animation:fadeIn .6s ease-out forwards}.anim-fade.exit{animation:fadeOut .4s ease-out forwards}
+        @keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes fadeOut{from{opacity:1}to{opacity:0}}
+
+        /* --- Blagues --- */
+        .joke-card{background:var(--card);border-radius:18px;padding:22px;margin-bottom:16px;box-shadow:0 4px 20px rgba(0,0,0,.04);border:1px solid rgba(0,0,0,.03);position:relative}
+        .joke-text{font-size:1.05rem;line-height:1.7;margin-bottom:15px;word-wrap:break-word}
+        .joke-meta{display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px dashed #eee}
+        .author-badge{background:#f0efff;color:var(--primary);padding:5px 14px;border-radius:20px;font-size:.85rem;font-weight:600}
+        .like-btn{cursor:pointer;padding:8px 16px;border-radius:20px;background:#f8f9fa;user-select:none;transition:all .3s}
+        .like-btn.liked{background:#ffeef0;color:#ff4757!important}
+        .like-btn.liked i{animation:heartPop .4s ease}
+        @keyframes heartPop{0%{transform:scale(1)}50%{transform:scale(1.4)}100%{transform:scale(1)}}
+
+        /* Bouton Delete Admin */
+        .admin-delete-btn{position:absolute;top:12px;right:12px;background:none;border:none;color:#b2bec3;font-size:1rem;cursor:pointer;padding:5px 8px;border-radius:8px;transition:all .2s;display:none}
+        .admin-delete-btn:hover{color:#ff4757;background:#ffeef0}
+        body.admin-mode .admin-delete-btn{display:block}
+
+        /* ✅ FAB Ajouter - TOUJOURS AU-DESSUS DU FOOTER */
+        .fab-add{
+            position:fixed;
+            bottom:calc(var(--fh) + 20px);
+            right:20px;
+            width:60px;
+            height:60px;
+            background:linear-gradient(135deg,#6c5ce7,#a29bfe);
+            color:#fff;
+            border-radius:50%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:26px;
+            box-shadow:0 6px 25px rgba(108,92,231,.4);
+            cursor:pointer;
+            z-index:1001;
+            transition:transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .fab-add:hover{
+            transform:scale(1.1);
+            box-shadow:0 8px 35px rgba(108,92,231,.6);
+        }
+
+        /* ✅ Ajout d'un padding-bottom supplémentaire si besoin */
+        .extra-bottom-space{
+            height:20px;
+        }
+
+        /* --- Modal --- */
+        .custom-modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(30,39,46,.6);backdrop-filter:blur(8px);z-index:2000;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all .35s ease}
+        .custom-modal-overlay.active{opacity:1;visibility:visible}
+        .custom-modal-content{background:#fff;width:92%;max-width:500px;border-radius:24px;padding:30px 25px;box-shadow:0 25px 60px rgba(0,0,0,.3);transform:translateY(30px) scale(.95);transition:all .35s cubic-bezier(.34,1.56,.64,1);position:relative;max-height:90vh;overflow-y:auto}
+        .custom-modal-overlay.active .custom-modal-content{transform:translateY(0) scale(1)}
+        .modal-close-btn{position:absolute;top:15px;right:18px;width:36px;height:36px;border-radius:50%;background:#f1f2f6;border:none;font-size:1.1rem;color:#636e72;cursor:pointer;display:flex;align-items:center;justify-content:center}
+        .input-group-custom{position:relative;margin-bottom:20px}
+        .input-group-custom i{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--primary);font-size:1.1rem;z-index:2}
+        .input-group-custom input{width:100%;padding:14px 16px 14px 48px;border:2px solid #eee;border-radius:14px;font-size:1rem;outline:none;background:#fafafa}
+        .input-group-custom input:focus{border-color:var(--primary);background:#fff}
+        .textarea-custom{width:100%;padding:14px 16px;border:2px solid #eee;border-radius:14px;font-size:1rem;outline:none;resize:vertical;min-height:160px;background:#fafafa;line-height:1.6}
+        .textarea-custom:focus{border-color:var(--primary);background:#fff}
+        .submit-btn-custom{width:100%;padding:15px;background:linear-gradient(135deg,var(--primary),#a29bfe);color:#fff;border:none;border-radius:14px;font-size:1.05rem;font-weight:700;cursor:pointer;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:10px}
+        .error-msg{color:#ff4757;font-size:.8rem;margin-top:6px;display:none;font-weight:600}
+        .loading-spinner{text-align:center;padding:40px;color:#b2bec3}
+    </style>
+</head>
+<body>
+
+<!-- ✅ HEADER AVEC BOUTON ADMIN À DROITE -->
+<header class="fixed-header">
+    <div class="header-top-row">
+        <div class="header-logo"><i class="fa-solid fa-face-laugh-squint"></i> NokatApp</div>
+        <!-- Bouton Admin dans le header -->
+        <button class="admin-header-btn" id="adminToggleBtn" onclick="toggleAdminMode()" title="Mode Admin">
+            <i class="fa-solid fa-shield-halved"></i>
+        </button>
+    </div>
+    <div class="header-marquee-wrapper">
+        <div class="header-marquee-content">👋 Bienvenue sur NokatApp le site de l'humour et de rires 😂</div>
+    </div>
+</header>
+
+<!-- Contenu -->
+<main class="container px-3" id="jokesContainer">
+    <div class="loading-spinner" id="loadingState">
+        <i class="fa-solid fa-spinner fa-spin fa-2x mb-3"></i>
+        <p>Chargement des blagues...</p>
+    </div>
+    <div class="text-center mt-5 text-muted" id="emptyState" style="display:none;">
+        <i class="fa-regular fa-comment-dots fa-3x mb-3 opacity-50"></i>
+        <p>Aucune blague pour le moment.<br>Soyez le premier à en ajouter !</p>
+    </div>
+    <!-- Espace supplémentaire pour éviter que le contenu ne colle au footer -->
+    <div class="extra-bottom-space"></div>
+</main>
+
+<!-- ✅ FAB Ajouter - Positionné au-dessus du footer -->
+<div class="fab-add" onclick="openCustomModal()">
+    <i class="fa-solid fa-plus"></i>
+</div>
+
+<!-- Footer avec Sites Amis -->
+<footer class="fixed-footer">
+    <div class="footer-credit">Créé par : <strong>M.Seddik ELidrissi</strong></div>
+    <div class="site-showcase" id="siteShowcase"></div>
+</footer>
+
+<!-- Modal Ajout Blague -->
+<div class="custom-modal-overlay" id="addJokeModal">
+    <div class="custom-modal-content">
+        <button class="modal-close-btn" onclick="closeCustomModal()"><i class="fa-solid fa-xmark"></i></button>
+        <div class="text-center mb-4">
+            <h3 class="fw-bold" style="color:var(--primary)"><i class="fa-solid fa-feather-pointed"></i> Nouvelle Blague</h3>
+            <p class="text-muted small">Partage ta bonne humeur 😄</p>
+        </div>
+        <div class="input-group-custom">
+            <i class="fa-solid fa-user-pen"></i>
+            <input type="text" id="modalAuthor" placeholder="Ton pseudo (ex: M.Seddik)" maxlength="30" autocomplete="off">
+            <div class="error-msg" id="authorError">⚠️ Le pseudo est obligatoire</div>
+        </div>
+        <div class="mb-3">
+            <label class="fw-bold small mb-2 d-block"><i class="fa-solid fa-quote-left text-muted me-1"></i> Ta Blague</label>
+            <textarea class="textarea-custom" id="modalJoke" placeholder="Écris ta blague ici"></textarea>
+            <div class="error-msg" id="jokeError">⚠️ La blague doit contenir au moins 10 caractères</div>
+        </div>
+        <button class="submit-btn-custom" id="submitBtn" onclick="submitJoke()">
+            <i class="fa-solid fa-paper-plane"></i> Publier la blague
+        </button>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+// =============================================
+// 🔧 REMPLACER PAR VOTRE URL APPS SCRIPT
+// =============================================
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzFHjSvctuyY9dW6LcPgXaR1RXTIpWJlFbpRRmuE-rZXqXopxJxJ_D15F6hK52elHZcA/exec";
+// =============================================
+
+const ADMIN_PASSWORD = "Seddik";
+const MY_LIKES_KEY = 'nokat_my_likes';
+let isAdminMode = false;
+
+function getMyLikes() { return JSON.parse(localStorage.getItem(MY_LIKES_KEY) || '{}'); }
+function setMyLike(id, liked) {
+    const myLikes = getMyLikes();
+    myLikes[id] = liked;
+    localStorage.setItem(MY_LIKES_KEY, JSON.stringify(myLikes));
+}
+
+function shuffleArray(arr) {
+    const shuffled = [...arr];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
+
+async function loadJokes() {
+    const container = document.getElementById('jokesContainer');
+    const loading = document.getElementById('loadingState');
+    const empty = document.getElementById('emptyState');
+
+    try {
+        const res = await fetch(SCRIPT_URL);
+        const jokes = await res.json();
+        const myLikes = getMyLikes();
+
+        loading.style.display = 'none';
+
+        if (!jokes || jokes.length === 0) {
+            container.innerHTML = '';
+            container.appendChild(empty);
+            empty.style.display = 'block';
+            return;
+        }
+
+        const shuffled = shuffleArray(jokes);
+        empty.style.display = 'none';
+
+        container.innerHTML = shuffled.map(j => {
+            const id = String(j.id);
+            const hasLiked = !!myLikes[id];
+            const icon = hasLiked ? 'fa-solid' : 'fa-regular';
+            const likedClass = hasLiked ? 'liked' : '';
+            const likesCount = parseInt(j.likes) || 0;
+
+            return `
+                <div class="joke-card" id="joke-${id}">
+                    <button class="admin-delete-btn" onclick="deleteJoke('${id}')" title="Supprimer">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                    <div class="joke-text">${escapeHtml(String(j.text || ''))}</div>
+                    <div class="joke-meta">
+                        <span class="author-badge"><i class="fa-solid fa-user-pen"></i> ${escapeHtml(String(j.author || 'Anonyme'))}</span>
+                        <span class="like-btn ${likedClass}" onclick="toggleLike('${id}', this)">
+                            <i class="${icon} fa-heart"></i> <span>${likesCount}</span>
+                        </span>
+                    </div>
+                </div>`;
+        }).join('');
+
+        container.appendChild(empty);
+    } catch (err) {
+        loading.innerHTML = `<i class="fa-solid fa-triangle-exclamation fa-2x mb-3 text-danger"></i><p>Erreur de chargement.<br>Vérifiez l'URL du script.</p>`;
+        console.error(err);
+    }
+}
+
+async function toggleLike(id, el) {
+    const myLikes = getMyLikes();
+    const hasLiked = !!myLikes[id];
+    const action = hasLiked ? 'unlike' : 'like';
+
+    const icon = el.querySelector('i');
+    const countSpan = el.querySelector('span');
+    let currentCount = parseInt(countSpan.textContent) || 0;
+
+    if (!hasLiked) {
+        el.classList.add('liked');
+        icon.className = 'fa-solid fa-heart';
+        countSpan.textContent = currentCount + 1;
+        setMyLike(id, true);
+    } else {
+        el.classList.remove('liked');
+        icon.className = 'fa-regular fa-heart';
+        countSpan.textContent = Math.max(0, currentCount - 1);
+        setMyLike(id, false);
+    }
+
+    try {
+        await fetch(SCRIPT_URL, {
+            method: 'POST', mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action, id })
+        });
+    } catch (err) { console.error('Like error:', err); }
+}
+
+// ✅ ADMIN MODE - Bouton maintenant dans le header
+function toggleAdminMode() {
+    if (isAdminMode) {
+        isAdminMode = false;
+        document.body.classList.remove('admin-mode');
+        document.getElementById('adminToggleBtn').classList.remove('active');
+        Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1500, background: '#2d3436', color: '#fff', icon: 'info', title: 'Mode Admin désactivé' });
+    } else {
+        Swal.fire({
+            title: '🔒 Espace Admin',
+            input: 'password',
+            inputLabel: 'Mot de passe',
+            inputPlaceholder: 'Entrez le mot de passe',
+            confirmButtonText: 'Accéder',
+            confirmButtonColor: '#6c5ce7',
+            cancelButtonText: 'Annuler',
+            showCancelButton: true,
+            inputValidator: (value) => {
+                if (!value) return 'Le mot de passe est requis !';
+                if (value !== ADMIN_PASSWORD) return 'Mot de passe incorrect !';
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                isAdminMode = true;
+                document.body.classList.add('admin-mode');
+                document.getElementById('adminToggleBtn').classList.add('active');
+                Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2000, background: '#00b894', color: '#fff', icon: 'success', title: 'Mode Admin activé ✅' });
+            }
+        });
+    }
+}
+
+async function deleteJoke(id) {
+    if (!isAdminMode) return;
+
+    const result = await Swal.fire({
+        title: 'Supprimer cette blague ?',
+        text: "Cette action est irréversible !",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ff4757',
+        cancelButtonColor: '#b2bec3',
+        confirmButtonText: 'Oui, supprimer',
+        cancelButtonText: 'Annuler'
+    });
+
+    if (result.isConfirmed) {
+        try {
+            await fetch(SCRIPT_URL, {
+                method: 'POST', mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'delete', id })
+            });
+
+            const card = document.getElementById(`joke-${id}`);
+            if (card) {
+                card.style.transition = 'all 0.4s ease';
+                card.style.opacity = '0';
+                card.style.transform = 'scale(0.8)';
+                setTimeout(() => card.remove(), 400);
+            }
+
+            Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2000, background: '#ff4757', color: '#fff', icon: 'success', title: 'Blague supprimée ! 🗑️' });
+        } catch (err) {
+            Swal.fire({ icon: 'error', title: 'Erreur', text: 'Impossible de supprimer.' });
+        }
+    }
+}
+
+async function submitJoke() {
+    hideErrors();
+    const author = document.getElementById('modalAuthor').value.trim();
+    const joke = document.getElementById('modalJoke').value.trim();
+    let valid = true;
+
+    if (!author) {
+        document.getElementById('authorError').style.display = 'block';
+        document.getElementById('modalAuthor').style.borderColor = '#ff4757';
+        valid = false;
+    }
+    if (joke.length < 10) {
+        document.getElementById('jokeError').style.display = 'block';
+        document.getElementById('modalJoke').style.borderColor = '#ff4757';
+        valid = false;
+    }
+    if (!valid) return;
+
+    const btn = document.getElementById('submitBtn');
+    const originalHTML = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Envoi...';
+    btn.disabled = true;
+
+    try {
+        await fetch(SCRIPT_URL, {
+            method: 'POST', mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: joke, author })
+        });
+        closeCustomModal();
+        Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2500, background: '#2d3436', color: '#fff', icon: 'success', title: 'Blague publiée ! 🎉' });
+        setTimeout(loadJokes, 2000);
+    } catch (err) {
+        Swal.fire({ icon: 'error', title: 'Erreur', text: "Impossible d'envoyer." });
+    } finally {
+        btn.innerHTML = originalHTML;
+        btn.disabled = false;
+    }
+}
+
+// Sites Amis avec liens
+const sitesAmis = [
+    { name: "راديو القرآن الكريم", url: "https://radiocoran.vercel.app", anim: "anim-slide-up" },
+    { name: "تلاوة القرآن الكريم", url: "https://tilawatquran.vercel.app", anim: "anim-zoom" },
+    { name: "آية كل يوم لعلها تكون رسالة", url: "https://ayatoday.vercel.app", anim: "anim-flip" },
+    { name: "منصة هل تعلم", url: "https://svque.vercel.app", anim: "anim-fade" }
+];
+let currentSiteIndex = 0;
+const showcase = document.getElementById('siteShowcase');
+
+function cycleSites() {
+    const oldEl = showcase.querySelector('.site-item-animated');
+    if (oldEl) { oldEl.classList.remove('enter'); oldEl.classList.add('exit'); setTimeout(() => oldEl.remove(), 500); }
+    const site = sitesAmis[currentSiteIndex];
+    const el = document.createElement('a');
+    el.href = site.url; el.target = '_blank'; el.rel = 'noopener noreferrer';
+    el.className = `site-item-animated ${site.anim} enter`;
+    el.textContent = site.name;
+    showcase.appendChild(el);
+    currentSiteIndex = (currentSiteIndex + 1) % sitesAmis.length;
+}
+
+function openCustomModal() { document.getElementById('addJokeModal').classList.add('active'); document.body.style.overflow = 'hidden'; setTimeout(() => document.getElementById('modalAuthor').focus(), 350); }
+function closeCustomModal() { document.getElementById('addJokeModal').classList.remove('active'); document.body.style.overflow = ''; setTimeout(() => { document.getElementById('modalAuthor').value = ''; document.getElementById('modalJoke').value = ''; hideErrors(); }, 350); }
+function hideErrors() { document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none'); document.querySelectorAll('.input-group-custom input, .textarea-custom').forEach(el => el.style.borderColor = '#eee'); }
+function escapeHtml(t) { if(!t) return ""; const d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadJokes();
+    cycleSites();
+    setInterval(cycleSites, 3000);
+    document.getElementById('addJokeModal').addEventListener('click', function(e) { if(e.target === this) closeCustomModal(); });
+});
+</script>
+</body>
+</html>
