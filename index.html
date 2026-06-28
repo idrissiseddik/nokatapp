@@ -47,7 +47,6 @@
         }
         .header-logo i{font-size:1.2rem;}
 
-        /* ✅ Mini select pour les filtres (petite icône) */
         .filter-mini-wrapper{
             position:relative;
             flex-shrink:0;
@@ -161,21 +160,6 @@
         .like-btn.liked i{animation:heartPop .4s ease}
         @keyframes heartPop{0%{transform:scale(1)}50%{transform:scale(1.4)}100%{transform:scale(1)}}
 
-        .lang-badge{
-            position:absolute;
-            top:12px;
-            right:50px;
-            font-size:.65rem;
-            padding:2px 10px;
-            border-radius:12px;
-            font-weight:600;
-            opacity:.6;
-            background:#f1f2f6;
-            color:#636e72;
-        }
-        .lang-badge.ar{background:#e8f5e9;color:#2e7d32;}
-        .lang-badge.fr{background:#e3f2fd;color:#0d47a1;}
-
         .admin-delete-btn{position:absolute;top:12px;right:12px;background:none;border:none;color:#b2bec3;font-size:1rem;cursor:pointer;padding:5px 8px;border-radius:8px;transition:all .2s;display:none}
         .admin-delete-btn:hover{color:#ff4757;background:#ffeef0}
         body.admin-mode .admin-delete-btn{display:block}
@@ -243,20 +227,43 @@
             50%{transform:scale(1.02)}
             100%{transform:scale(1);opacity:1}
         }
+
+        /* ✅ Bouton Refresh pour réorganiser */
+        .refresh-btn{
+            background:none;
+            border:2px solid #dfe6e9;
+            color:#b2bec3;
+            width:32px;
+            height:32px;
+            border-radius:50%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:.8rem;
+            cursor:pointer;
+            transition:all .3s;
+            flex-shrink:0;
+        }
+        .refresh-btn:hover{
+            border-color:var(--primary);
+            color:var(--primary);
+            transform:rotate(180deg);
+        }
+        .refresh-btn:active{
+            transform:rotate(360deg);
+        }
     </style>
 </head>
 <body>
 
 <header class="fixed-header">
     <div class="header-top-row">
-        <!-- ✅ Logo complet -->
         <div class="header-logo">
             <i class="fa-solid fa-face-laugh-squint"></i> 
             <span>NokatApp</span>
         </div>
         
-        <!-- ✅ Mini select avec icône + Bouton Admin -->
-        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+        <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
             <div class="filter-mini-wrapper">
                 <select id="filterSelect" onchange="filterJokes(this.value)">
                     <option value="all">🌐</option>
@@ -265,6 +272,11 @@
                 </select>
                 <span class="select-icon">▼</span>
             </div>
+            
+            <!-- ✅ Bouton Refresh pour réorganiser aléatoirement -->
+            <button class="refresh-btn" onclick="reshuffleJokes()" title="Réorganiser les blagues">
+                <i class="fa-solid fa-rotate"></i>
+            </button>
             
             <button class="admin-header-btn" id="adminToggleBtn" onclick="toggleAdminMode()" title="Mode Admin">
                 <i class="fa-solid fa-shield-halved"></i>
@@ -332,22 +344,9 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzFHjSvctuyY9dW6LcP
 
 const ADMIN_PASSWORD = "Seddik";
 const MY_LIKES_KEY = 'nokat_my_likes';
-const SHUFFLE_ORDER_KEY = 'nokat_shuffle_order';
 let isAdminMode = false;
 let allJokes = [];
 let currentFilter = 'all';
-let currentShuffledIds = [];
-
-function getShuffledOrder() {
-    try {
-        const saved = localStorage.getItem(SHUFFLE_ORDER_KEY);
-        return saved ? JSON.parse(saved) : null;
-    } catch { return null; }
-}
-
-function saveShuffledOrder(order) {
-    localStorage.setItem(SHUFFLE_ORDER_KEY, JSON.stringify(order));
-}
 
 function getMyLikes() { return JSON.parse(localStorage.getItem(MY_LIKES_KEY) || '{}'); }
 function setMyLike(id, liked) {
@@ -356,36 +355,10 @@ function setMyLike(id, liked) {
     localStorage.setItem(MY_LIKES_KEY, JSON.stringify(myLikes));
 }
 
-function shuffleWithMemory(jokes) {
-    const savedOrder = getShuffledOrder();
-    const jokeIds = jokes.map(j => String(j.id));
-    
-    if (savedOrder && savedOrder.length === jokeIds.length) {
-        const savedIds = savedOrder.map(id => String(id));
-        const allMatch = jokeIds.every(id => savedIds.includes(id)) && 
-                        savedIds.every(id => jokeIds.includes(id));
-        if (allMatch) {
-            const shuffled = [];
-            savedOrder.forEach(id => {
-                const joke = jokes.find(j => String(j.id) === String(id));
-                if (joke) shuffled.push(joke);
-            });
-            jokes.forEach(j => {
-                if (!shuffled.some(s => String(s.id) === String(j.id))) {
-                    shuffled.push(j);
-                }
-            });
-            return shuffled;
-        }
-    }
-    
-    const shuffled = shuffleArray(jokes);
-    saveShuffledOrder(shuffled.map(j => String(j.id)));
-    return shuffled;
-}
-
+// ✅ Mélange aléatoire simple et efficace
 function shuffleArray(arr) {
     const shuffled = [...arr];
+    // Algorithme de Fisher-Yates
     for (let i = shuffled.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
@@ -395,7 +368,6 @@ function shuffleArray(arr) {
 
 function detectLanguage(text) {
     if (!text) return 'unknown';
-    const arabicPattern = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
     const textSample = text.substring(0, 200);
     const arabicChars = (textSample.match(/[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/g) || []).length;
     const totalChars = textSample.replace(/\s/g, '').length;
@@ -411,7 +383,7 @@ function filterJokes(lang) {
     const cards = document.querySelectorAll('.joke-card');
     let visibleCount = 0;
     
-    cards.forEach((card, index) => {
+    cards.forEach((card) => {
         if (lang === 'all') {
             card.classList.remove('hidden');
             visibleCount++;
@@ -442,14 +414,65 @@ function filterJokes(lang) {
     }
 }
 
+// ✅ Fonction pour réorganiser aléatoirement
 function reshuffleJokes() {
-    localStorage.removeItem(SHUFFLE_ORDER_KEY);
-    loadJokes();
+    if (allJokes.length === 0) return;
+    
+    // Mélanger les blagues
+    const shuffled = shuffleArray(allJokes);
+    
+    // Reconstruire l'affichage avec le nouvel ordre
+    const container = document.getElementById('jokesContainer');
+    const empty = document.getElementById('emptyState');
+    const myLikes = getMyLikes();
+    
+    // Garder le compteur et le loading
+    const resultCounter = document.getElementById('resultCounter');
+    
+    // Supprimer toutes les cartes existantes (sauf loading et empty)
+    document.querySelectorAll('.joke-card').forEach(el => el.remove());
+    
+    // Ajouter les nouvelles cartes dans l'ordre mélangé
+    shuffled.forEach((j, index) => {
+        const id = String(j.id);
+        const hasLiked = !!myLikes[id];
+        const icon = hasLiked ? 'fa-solid' : 'fa-regular';
+        const likedClass = hasLiked ? 'liked' : '';
+        const likesCount = parseInt(j.likes) || 0;
+        const text = String(j.text || '');
+        const lang = detectLanguage(text);
+
+        const card = document.createElement('div');
+        card.className = `joke-card reordering`;
+        card.id = `joke-${id}`;
+        card.dataset.lang = lang;
+        card.dataset.index = index;
+        card.innerHTML = `
+            <button class="admin-delete-btn" onclick="deleteJoke('${id}')" title="Supprimer">
+                <i class="fa-solid fa-trash-can"></i>
+            </button>
+            <div class="joke-text">${escapeHtml(text)}</div>
+            <div class="joke-meta">
+                <span class="author-badge"><i class="fa-solid fa-user-pen"></i> ${escapeHtml(String(j.author || 'Anonyme'))}</span>
+                <span class="like-btn ${likedClass}" onclick="toggleLike('${id}', this)">
+                    <i class="${icon} fa-heart"></i> <span>${likesCount}</span>
+                </span>
+            </div>
+        `;
+        
+        // Insérer avant le emptyState
+        container.insertBefore(card, empty);
+    });
+    
+    // Mettre à jour le compteur
+    filterJokes(currentFilter);
+    
+    // Notification
     Swal.fire({
         toast: true,
         position: 'top-end',
         showConfirmButton: false,
-        timer: 1500,
+        timer: 1200,
         background: '#6c5ce7',
         color: '#fff',
         icon: 'info',
@@ -478,7 +501,8 @@ async function loadJokes() {
             return;
         }
 
-        const shuffled = shuffleWithMemory(jokes);
+        // ✅ Mélanger aléatoirement à chaque chargement
+        const shuffled = shuffleArray(jokes);
         empty.style.display = 'none';
         document.getElementById('resultCounter').style.display = 'block';
 
@@ -490,12 +514,9 @@ async function loadJokes() {
             const likesCount = parseInt(j.likes) || 0;
             const text = String(j.text || '');
             const lang = detectLanguage(text);
-            const langLabel = lang === 'ar' ? '🇸🇦 عربي' : '🇫🇷 Français';
-            const langClass = lang === 'ar' ? 'ar' : 'fr';
 
             return `
                 <div class="joke-card reordering" id="joke-${id}" data-lang="${lang}" data-index="${index}">
-                    <span class="lang-badge ${langClass}">${langLabel}</span>
                     <button class="admin-delete-btn" onclick="deleteJoke('${id}')" title="Supprimer">
                         <i class="fa-solid fa-trash-can"></i>
                     </button>
@@ -614,6 +635,8 @@ async function deleteJoke(id) {
                 card.style.transform = 'scale(0.8)';
                 setTimeout(() => {
                     card.remove();
+                    // Mettre à jour la liste allJokes
+                    allJokes = allJokes.filter(j => String(j.id) !== id);
                     filterJokes(currentFilter);
                 }, 400);
             }
@@ -655,7 +678,6 @@ async function submitJoke() {
             body: JSON.stringify({ text: joke, author })
         });
         closeCustomModal();
-        localStorage.removeItem(SHUFFLE_ORDER_KEY);
         Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2500, background: '#2d3436', color: '#fff', icon: 'success', title: 'Blague publiée ! 🎉' });
         setTimeout(loadJokes, 2000);
     } catch (err) {
@@ -697,24 +719,6 @@ document.addEventListener('DOMContentLoaded', () => {
     cycleSites();
     setInterval(cycleSites, 3000);
     document.getElementById('addJokeModal').addEventListener('click', function(e) { if(e.target === this) closeCustomModal(); });
-    
-    document.querySelector('.header-logo').addEventListener('dblclick', function(e) {
-        e.preventDefault();
-        if (isAdminMode) {
-            reshuffleJokes();
-        } else {
-            Swal.fire({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 1500,
-                background: '#ff6b6b',
-                color: '#fff',
-                icon: 'warning',
-                title: '🔒 Activez le mode Admin d\'abord'
-            });
-        }
-    });
 });
 </script>
 </body>
