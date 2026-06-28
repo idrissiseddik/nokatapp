@@ -8,25 +8,82 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <style>
-        :root{--primary:#6c5ce7;--bg:#f4f6f9;--card:#fff;--fh:90px;--hh:72px}
-        
-        body{
-            background:var(--bg);color:#2d3436;font-family:'Segoe UI',sans-serif;
-            padding-top:calc(var(--hh) + 20px);
-            padding-bottom:calc(var(--fh) + 20px);
-            overflow-x:hidden;
-            min-height:100vh;
+        :root{
+            --primary:#6c5ce7;
+            --primary-hover:#5a4bd1;
+            --bg:#f4f6f9;
+            --card:#fff;
+            --card-border:rgba(0,0,0,.03);
+            --text:#2d3436;
+            --text-muted:#636e72;
+            --border:#eee;
+            --shadow:0 4px 20px rgba(0,0,0,.04);
+            --header-bg:rgba(255,255,255,.98);
+            --input-bg:#fafafa;
+            --input-border:#eee;
+            --like-bg:#f8f9fa;
+            --like-hover:#ffeef0;
+            --comment-bg:#f8f9fa;
+            --footer-bg:#1e272e;
+            --footer-text:#fff;
+            --overlay-bg:rgba(255,255,255,.98);
+            --overlay-header-bg:#fff;
+            --overlay-border:#f0f0f0;
+            --fh:90px;
+            --hh:72px;
+            --transition:all .3s ease;
         }
 
-        /* --- Header Fixe --- */
+        [data-theme="dark"]{
+            --bg:#1a1a2e;
+            --card:#16213e;
+            --card-border:rgba(255,255,255,.05);
+            --text:#e0e0e0;
+            --text-muted:#a0a0a0;
+            --border:#2a2a4a;
+            --shadow:0 4px 20px rgba(0,0,0,.3);
+            --header-bg:rgba(22,33,62,.98);
+            --input-bg:#1a1a2e;
+            --input-border:#2a2a4a;
+            --like-bg:#1a1a2e;
+            --like-hover:#2a1a3a;
+            --comment-bg:#1a1a2e;
+            --overlay-bg:rgba(22,33,62,.98);
+            --overlay-header-bg:#16213e;
+            --overlay-border:#2a2a4a;
+        }
+
+        body{
+            background:var(--bg);
+            color:var(--text);
+            font-family:'Segoe UI',sans-serif;
+            padding-top:calc(var(--hh) + 20px);
+            padding-bottom:calc(var(--fh) + 30px);
+            overflow-x:hidden;
+            transition:var(--transition);
+        }
+
+        /* Header */
         .fixed-header{
-            position:fixed;top:0;left:0;width:100%;z-index:1000;
-            background:rgba(255,255,255,.98);backdrop-filter:blur(12px);
+            position:fixed;
+            top:0;
+            left:0;
+            width:100%;
+            z-index:1000;
+            background:var(--header-bg);
+            backdrop-filter:blur(12px);
             box-shadow:0 2px 15px rgba(0,0,0,.05);
             height:var(--hh);
-            display:flex;flex-direction:column;justify-content:center;
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
             padding:0 12px;
+            transition:var(--transition);
         }
+        [data-theme="dark"] .fixed-header{
+            box-shadow:0 2px 15px rgba(0,0,0,.3);
+        }
+
         .header-top-row{
             display:flex;
             align-items:center;
@@ -45,7 +102,32 @@
             flex-shrink:0;
             cursor:default;
         }
-        .header-logo i{font-size:1.2rem;}
+        .header-logo i{font-size:1.2rem}
+
+        .dark-mode-btn{
+            background:none;
+            border:2px solid var(--input-border);
+            color:var(--text-muted);
+            width:32px;
+            height:32px;
+            border-radius:50%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:.8rem;
+            cursor:pointer;
+            transition:all .3s;
+            flex-shrink:0;
+        }
+        .dark-mode-btn:hover{
+            border-color:var(--primary);
+            color:var(--primary);
+        }
+        .dark-mode-btn.active{
+            background:var(--primary);
+            border-color:var(--primary);
+            color:#fff;
+        }
 
         .filter-mini-wrapper{
             position:relative;
@@ -56,12 +138,12 @@
         }
         .filter-mini-wrapper select{
             padding:4px 24px 4px 8px;
-            border:2px solid #dfe6e9;
+            border:2px solid var(--input-border);
             border-radius:20px;
-            background:transparent;
+            background:var(--input-bg);
             font-size:.75rem;
             font-weight:600;
-            color:#2d3436;
+            color:var(--text);
             cursor:pointer;
             appearance:none;
             -webkit-appearance:none;
@@ -78,13 +160,15 @@
             padding:6px;
             font-weight:500;
             font-size:.8rem;
+            background:var(--card);
+            color:var(--text);
         }
         .filter-mini-wrapper .select-icon{
             position:absolute;
             right:6px;
             top:50%;
             transform:translateY(-50%);
-            color:#b2bec3;
+            color:var(--text-muted);
             pointer-events:none;
             font-size:.7rem;
             font-weight:900;
@@ -96,52 +180,167 @@
             color:var(--primary);
         }
 
-        .admin-header-btn{
-            background:none;border:2px solid #dfe6e9;color:#b2bec3;
-            width:32px;height:32px;border-radius:50%;
-            display:flex;align-items:center;justify-content:center;
-            font-size:.8rem;cursor:pointer;transition:all .3s;flex-shrink:0;
+        .refresh-btn{
+            background:none;
+            border:2px solid var(--input-border);
+            color:var(--text-muted);
+            width:32px;
+            height:32px;
+            border-radius:50%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:.8rem;
+            cursor:pointer;
+            transition:all .3s;
+            flex-shrink:0;
         }
-        .admin-header-btn:hover{border-color:var(--primary);color:var(--primary)}
+        .refresh-btn:hover{
+            border-color:var(--primary);
+            color:var(--primary);
+            transform:rotate(180deg);
+        }
+        .refresh-btn:active{
+            transform:rotate(360deg);
+        }
+
+        .admin-header-btn{
+            background:none;
+            border:2px solid var(--input-border);
+            color:var(--text-muted);
+            width:32px;
+            height:32px;
+            border-radius:50%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:.8rem;
+            cursor:pointer;
+            transition:all .3s;
+            flex-shrink:0;
+        }
+        .admin-header-btn:hover{
+            border-color:var(--primary);
+            color:var(--primary);
+        }
         .admin-header-btn.active{
-            background:#ff4757;border-color:#ff4757;color:#fff;
+            background:#ff4757;
+            border-color:#ff4757;
+            color:#fff;
             animation:pulseAdmin 1.5s infinite;
         }
-        @keyframes pulseAdmin{0%,100%{box-shadow:0 0 0 0 rgba(255,71,87,.4)}50%{box-shadow:0 0 0 8px rgba(255,71,87,0)}}
+        @keyframes pulseAdmin{
+            0%,100%{box-shadow:0 0 0 0 rgba(255,71,87,.4)}
+            50%{box-shadow:0 0 0 8px rgba(255,71,87,0)}
+        }
 
         .header-marquee-wrapper{width:100%;overflow:hidden;white-space:nowrap}
-        .header-marquee-content{display:inline-block;font-size:.75rem;font-weight:500;color:#636e72;animation:passAndReset 10s linear infinite}
-        @keyframes passAndReset{0%{transform:translateX(100vw);opacity:0}3%{opacity:1}90%{transform:translateX(-100%);opacity:1}95%{transform:translateX(-100%);opacity:0}100%{transform:translateX(100vw);opacity:0}}
+        .header-marquee-content{
+            display:inline-block;
+            font-size:.75rem;
+            font-weight:500;
+            color:var(--text-muted);
+            animation:passAndReset 10s linear infinite;
+        }
+        @keyframes passAndReset{
+            0%{transform:translateX(100vw);opacity:0}
+            3%{opacity:1}
+            90%{transform:translateX(-100%);opacity:1}
+            95%{transform:translateX(-100%);opacity:0}
+            100%{transform:translateX(100vw);opacity:0}
+        }
 
-        /* --- Footer & Sites Amis --- */
-        .fixed-footer{position:fixed;bottom:0;left:0;width:100%;z-index:1000;background:#1e272e;color:#fff;height:var(--fh);display:flex;flex-direction:column;justify-content:center;box-shadow:0 -4px 20px rgba(0,0,0,.15)}
-        .footer-credit{font-size:.7rem;text-align:center;opacity:.7;padding:4px 0}
-        .site-showcase{flex:1;display:flex;align-items:center;justify-content:center;perspective:1000px;overflow:hidden;position:relative}
-        .site-item-animated{font-size:1.1rem;font-weight:600;color:#dfe6e9;text-decoration:none;position:absolute;opacity:0;pointer-events:auto;letter-spacing:.5px;cursor:pointer;transition:color .3s}
+        /* Footer */
+        .fixed-footer{
+            position:fixed;
+            bottom:0;
+            left:0;
+            width:100%;
+            z-index:999;
+            background:var(--footer-bg);
+            color:var(--footer-text);
+            height:var(--fh);
+            display:flex;
+            flex-direction:column;
+            justify-content:space-between;
+            box-shadow:0 -4px 20px rgba(0,0,0,.15);
+            padding:6px 0;
+        }
+        .site-showcase{
+            flex:1;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            perspective:1000px;
+            overflow:hidden;
+            position:relative;
+            min-height:45px;
+        }
+        .site-item-animated{
+            font-size:1.1rem;
+            font-weight:600;
+            color:#dfe6e9;
+            text-decoration:none;
+            position:absolute;
+            opacity:0;
+            pointer-events:auto;
+            letter-spacing:.5px;
+            cursor:pointer;
+            transition:color .3s;
+        }
         .site-item-animated:hover{color:#a29bfe}
-        .anim-slide-up.enter{animation:slideUpIn .6s cubic-bezier(.34,1.56,.64,1) forwards}.anim-slide-up.exit{animation:slideUpOut .4s ease-in forwards}
-        @keyframes slideUpIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}@keyframes slideUpOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-20px)}}
-        .anim-zoom.enter{animation:zoomIn .7s cubic-bezier(.175,.885,.32,1.275) forwards}.anim-zoom.exit{animation:zoomOut .3s ease-in forwards}
-        @keyframes zoomIn{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:scale(1)}}@keyframes zoomOut{from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(1.5)}}
-        .anim-flip.enter{animation:flipIn .8s ease-out forwards}.anim-flip.exit{animation:flipOut .4s ease-in forwards}
-        @keyframes flipIn{from{opacity:0;transform:rotateY(90deg)}to{opacity:1;transform:rotateY(0)}}@keyframes flipOut{from{opacity:1;transform:rotateY(0)}to{opacity:0;transform:rotateY(-90deg)}}
-        .anim-fade.enter{animation:fadeIn .6s ease-out forwards}.anim-fade.exit{animation:fadeOut .4s ease-out forwards}
-        @keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes fadeOut{from{opacity:1}to{opacity:0}}
+        .footer-credit{
+            font-size:.65rem;
+            text-align:center;
+            opacity:.6;
+            padding:2px 0 4px 0;
+            flex-shrink:0;
+            letter-spacing:0.3px;
+        }
+        .footer-credit strong{
+            color:#a29bfe;
+            opacity:1;
+        }
 
-        /* --- Blagues --- */
+        .anim-slide-up.enter{animation:slideUpIn .6s cubic-bezier(.34,1.56,.64,1) forwards}
+        .anim-slide-up.exit{animation:slideUpOut .4s ease-in forwards}
+        @keyframes slideUpIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes slideUpOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-20px)}}
+        
+        .anim-zoom.enter{animation:zoomIn .7s cubic-bezier(.175,.885,.32,1.275) forwards}
+        .anim-zoom.exit{animation:zoomOut .3s ease-in forwards}
+        @keyframes zoomIn{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:scale(1)}}
+        @keyframes zoomOut{from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(1.5)}}
+        
+        .anim-flip.enter{animation:flipIn .8s ease-out forwards}
+        .anim-flip.exit{animation:flipOut .4s ease-in forwards}
+        @keyframes flipIn{from{opacity:0;transform:rotateY(90deg)}to{opacity:1;transform:rotateY(0)}}
+        @keyframes flipOut{from{opacity:1;transform:rotateY(0)}to{opacity:0;transform:rotateY(-90deg)}}
+        
+        .anim-fade.enter{animation:fadeIn .6s ease-out forwards}
+        .anim-fade.exit{animation:fadeOut .4s ease-out forwards}
+        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+        @keyframes fadeOut{from{opacity:1}to{opacity:0}}
+
+        /* Blagues */
         .joke-card{
             background:var(--card);
             border-radius:18px;
             padding:22px;
             margin-bottom:16px;
-            box-shadow:0 4px 20px rgba(0,0,0,.04);
-            border:1px solid rgba(0,0,0,.03);
+            box-shadow:var(--shadow);
+            border:1px solid var(--card-border);
             position:relative;
-            transition:all .3s ease;
+            transition:var(--transition);
         }
-        .joke-card.hidden{
-            display:none;
+        .joke-card.hidden{display:none}
+        .joke-card.reordering{animation:reorderPop .4s ease}
+        @keyframes reorderPop{
+            0%{transform:scale(0.95);opacity:0.5}
+            50%{transform:scale(1.02)}
+            100%{transform:scale(1);opacity:1}
         }
+        
         .joke-text{
             font-size:1.05rem;
             line-height:1.8;
@@ -152,16 +351,81 @@
             text-justify:inter-word;
             direction:auto;
             unicode-bidi:plaintext;
+            color:var(--text);
         }
-        .joke-meta{display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px dashed #eee;flex-wrap:wrap;gap:8px}
-        .author-badge{background:#f0efff;color:var(--primary);padding:5px 14px;border-radius:20px;font-size:.85rem;font-weight:600}
-        .like-btn{cursor:pointer;padding:8px 16px;border-radius:20px;background:#f8f9fa;user-select:none;transition:all .3s}
-        .like-btn.liked{background:#ffeef0;color:#ff4757!important}
+        .joke-meta{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding-top:12px;
+            border-top:1px dashed var(--border);
+            flex-wrap:wrap;
+            gap:8px;
+        }
+        .author-badge{
+            background:var(--comment-bg);
+            color:var(--primary);
+            padding:5px 14px;
+            border-radius:20px;
+            font-size:.85rem;
+            font-weight:600;
+        }
+        .like-btn{
+            cursor:pointer;
+            padding:8px 16px;
+            border-radius:20px;
+            background:var(--like-bg);
+            color:var(--text);
+            user-select:none;
+            transition:all .3s;
+        }
+        .like-btn.liked{
+            background:var(--like-hover);
+            color:#ff4757!important;
+        }
         .like-btn.liked i{animation:heartPop .4s ease}
-        @keyframes heartPop{0%{transform:scale(1)}50%{transform:scale(1.4)}100%{transform:scale(1)}}
+        @keyframes heartPop{
+            0%{transform:scale(1)}
+            50%{transform:scale(1.4)}
+            100%{transform:scale(1)}
+        }
 
-        .admin-delete-btn{position:absolute;top:12px;right:12px;background:none;border:none;color:#b2bec3;font-size:1rem;cursor:pointer;padding:5px 8px;border-radius:8px;transition:all .2s;display:none}
-        .admin-delete-btn:hover{color:#ff4757;background:#ffeef0}
+        .comments-toggle{
+            cursor:pointer;
+            padding:8px 16px;
+            border-radius:20px;
+            background:var(--comment-bg);
+            color:var(--primary);
+            font-size:.85rem;
+            font-weight:600;
+            border:none;
+            transition:all .3s;
+            display:flex;
+            align-items:center;
+            gap:6px;
+        }
+        .comments-toggle:hover{
+            background:var(--like-hover);
+        }
+
+        .admin-delete-btn{
+            position:absolute;
+            top:12px;
+            right:12px;
+            background:none;
+            border:none;
+            color:var(--text-muted);
+            font-size:1rem;
+            cursor:pointer;
+            padding:5px 8px;
+            border-radius:8px;
+            transition:all .2s;
+            display:none;
+        }
+        .admin-delete-btn:hover{
+            color:#ff4757;
+            background:var(--like-hover);
+        }
         body.admin-mode .admin-delete-btn{display:block}
 
         .fab-add{
@@ -187,29 +451,9 @@
             box-shadow:0 8px 35px rgba(108,92,231,.6);
         }
 
-        .extra-bottom-space{
-            height:20px;
-        }
-
-        /* --- Modal --- */
-        .custom-modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(30,39,46,.6);backdrop-filter:blur(8px);z-index:2000;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all .35s ease}
-        .custom-modal-overlay.active{opacity:1;visibility:visible}
-        .custom-modal-content{background:#fff;width:92%;max-width:500px;border-radius:24px;padding:30px 25px;box-shadow:0 25px 60px rgba(0,0,0,.3);transform:translateY(30px) scale(.95);transition:all .35s cubic-bezier(.34,1.56,.64,1);position:relative;max-height:90vh;overflow-y:auto}
-        .custom-modal-overlay.active .custom-modal-content{transform:translateY(0) scale(1)}
-        .modal-close-btn{position:absolute;top:15px;right:18px;width:36px;height:36px;border-radius:50%;background:#f1f2f6;border:none;font-size:1.1rem;color:#636e72;cursor:pointer;display:flex;align-items:center;justify-content:center}
-        .input-group-custom{position:relative;margin-bottom:20px}
-        .input-group-custom i{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--primary);font-size:1.1rem;z-index:2}
-        .input-group-custom input{width:100%;padding:14px 16px 14px 48px;border:2px solid #eee;border-radius:14px;font-size:1rem;outline:none;background:#fafafa}
-        .input-group-custom input:focus{border-color:var(--primary);background:#fff}
-        .textarea-custom{width:100%;padding:14px 16px;border:2px solid #eee;border-radius:14px;font-size:1rem;outline:none;resize:vertical;min-height:160px;background:#fafafa;line-height:1.6}
-        .textarea-custom:focus{border-color:var(--primary);background:#fff}
-        .submit-btn-custom{width:100%;padding:15px;background:linear-gradient(135deg,var(--primary),#a29bfe);color:#fff;border:none;border-radius:14px;font-size:1.05rem;font-weight:700;cursor:pointer;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:10px}
-        .error-msg{color:#ff4757;font-size:.8rem;margin-top:6px;display:none;font-weight:600}
-        .loading-spinner{text-align:center;padding:40px;color:#b2bec3}
-
         .result-counter{
             font-size:.85rem;
-            color:#b2bec3;
+            color:var(--text-muted);
             padding:8px 0 12px;
             text-align:center;
             font-weight:500;
@@ -219,38 +463,331 @@
             font-weight:700;
         }
 
-        .joke-card.reordering{
-            animation:reorderPop .4s ease;
+        .loading-spinner{
+            text-align:center;
+            padding:40px;
+            color:var(--text-muted);
         }
-        @keyframes reorderPop{
-            0%{transform:scale(0.95);opacity:0.5}
-            50%{transform:scale(1.02)}
-            100%{transform:scale(1);opacity:1}
-        }
+        .extra-bottom-space{height:30px}
 
-        /* ✅ Bouton Refresh pour réorganiser */
-        .refresh-btn{
-            background:none;
-            border:2px solid #dfe6e9;
-            color:#b2bec3;
-            width:32px;
-            height:32px;
-            border-radius:50%;
+        /* Modal */
+        .custom-modal-overlay{
+            position:fixed;
+            top:0;
+            left:0;
+            width:100%;
+            height:100%;
+            background:rgba(30,39,46,.6);
+            backdrop-filter:blur(8px);
+            z-index:2000;
             display:flex;
             align-items:center;
             justify-content:center;
+            opacity:0;
+            visibility:hidden;
+            transition:all .35s ease;
+        }
+        .custom-modal-overlay.active{opacity:1;visibility:visible}
+        .custom-modal-content{
+            background:var(--card);
+            color:var(--text);
+            width:92%;
+            max-width:500px;
+            border-radius:24px;
+            padding:30px 25px;
+            box-shadow:0 25px 60px rgba(0,0,0,.3);
+            transform:translateY(30px) scale(.95);
+            transition:all .35s cubic-bezier(.34,1.56,.64,1);
+            position:relative;
+            max-height:90vh;
+            overflow-y:auto;
+        }
+        .custom-modal-overlay.active .custom-modal-content{transform:translateY(0) scale(1)}
+        .modal-close-btn{
+            position:absolute;
+            top:15px;
+            right:18px;
+            width:36px;
+            height:36px;
+            border-radius:50%;
+            background:var(--comment-bg);
+            border:none;
+            font-size:1.1rem;
+            color:var(--text-muted);
+            cursor:pointer;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+        }
+        .input-group-custom{position:relative;margin-bottom:20px}
+        .input-group-custom i{
+            position:absolute;
+            left:16px;
+            top:50%;
+            transform:translateY(-50%);
+            color:var(--primary);
+            font-size:1.1rem;
+            z-index:2;
+        }
+        .input-group-custom input{
+            width:100%;
+            padding:14px 16px 14px 48px;
+            border:2px solid var(--input-border);
+            border-radius:14px;
+            font-size:1rem;
+            outline:none;
+            background:var(--input-bg);
+            color:var(--text);
+        }
+        .input-group-custom input:focus{
+            border-color:var(--primary);
+            background:var(--card);
+        }
+        .textarea-custom{
+            width:100%;
+            padding:14px 16px;
+            border:2px solid var(--input-border);
+            border-radius:14px;
+            font-size:1rem;
+            outline:none;
+            resize:vertical;
+            min-height:160px;
+            background:var(--input-bg);
+            color:var(--text);
+            line-height:1.6;
+        }
+        .textarea-custom:focus{
+            border-color:var(--primary);
+            background:var(--card);
+        }
+        .submit-btn-custom{
+            width:100%;
+            padding:15px;
+            background:linear-gradient(135deg,var(--primary),#a29bfe);
+            color:#fff;
+            border:none;
+            border-radius:14px;
+            font-size:1.05rem;
+            font-weight:700;
+            cursor:pointer;
+            margin-top:10px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            gap:10px;
+        }
+        .error-msg{
+            color:#ff4757;
+            font-size:.8rem;
+            margin-top:6px;
+            display:none;
+            font-weight:600;
+        }
+
+        /* Overlay Commentaires */
+        .comments-overlay{
+            position:fixed;
+            top:0;
+            left:0;
+            width:100%;
+            height:100%;
+            background:var(--overlay-bg);
+            z-index:3000;
+            display:flex;
+            flex-direction:column;
+            opacity:0;
+            visibility:hidden;
+            transition:all .35s ease;
+        }
+        .comments-overlay.active{
+            opacity:1;
+            visibility:visible;
+        }
+
+        .comments-overlay-header{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:15px 20px;
+            background:var(--overlay-header-bg);
+            border-bottom:2px solid var(--overlay-border);
+            flex-shrink:0;
+            min-height:60px;
+        }
+        .comments-overlay-header h5{
+            margin:0;
+            color:var(--primary);
+            font-weight:700;
+            display:flex;
+            align-items:center;
+            gap:8px;
+        }
+        .comments-overlay-close{
+            background:none;
+            border:none;
+            font-size:1.5rem;
+            color:var(--text-muted);
+            cursor:pointer;
+            padding:5px 10px;
+            border-radius:10px;
+            transition:all .2s;
+        }
+        .comments-overlay-close:hover{
+            background:var(--comment-bg);
+            color:#ff4757;
+        }
+
+        .comments-overlay-body{
+            flex:1;
+            overflow-y:auto;
+            padding:15px 20px 15px 20px;
+        }
+        .comments-overlay-body .comment-item{
+            background:var(--comment-bg);
+            border-radius:12px;
+            padding:12px 15px;
+            margin-bottom:8px;
+            position:relative;
+        }
+        .comments-overlay-body .comment-item .comment-name{
+            font-weight:700;
+            font-size:.85rem;
+            color:var(--primary);
+        }
+        .comments-overlay-body .comment-item .comment-date{
+            font-size:.7rem;
+            color:var(--text-muted);
+            margin-left:8px;
+        }
+        .comments-overlay-body .comment-item .comment-text{
+            font-size:.9rem;
+            margin-top:4px;
+            line-height:1.5;
+            color:var(--text);
+        }
+        .comments-overlay-body .comment-delete-btn{
+            position:absolute;
+            top:8px;
+            right:8px;
+            background:none;
+            border:none;
+            color:var(--text-muted);
             font-size:.8rem;
             cursor:pointer;
-            transition:all .3s;
+            display:none;
+            padding:2px 6px;
+            border-radius:6px;
+            transition:all .2s;
+        }
+        .comments-overlay-body .comment-delete-btn:hover{
+            color:#ff4757;
+            background:var(--like-hover);
+        }
+        body.admin-mode .comments-overlay-body .comment-delete-btn{
+            display:block !important;
+        }
+        .comments-overlay-body .no-comments{
+            text-align:center;
+            color:var(--text-muted);
+            font-size:.9rem;
+            padding:30px 0;
+            font-style:italic;
+        }
+
+        .comments-overlay-footer{
             flex-shrink:0;
+            background:var(--overlay-header-bg);
+            padding:12px 15px;
+            border-top:2px solid var(--overlay-border);
         }
-        .refresh-btn:hover{
+        .comments-overlay-footer .comment-form{
+            display:flex;
+            flex-direction:column;
+            gap:8px;
+        }
+        .comments-overlay-footer .comment-form .form-row{
+            display:flex;
+            gap:8px;
+            align-items:center;
+        }
+        .comments-overlay-footer .comment-form .form-row input{
+            flex:0 0 120px;
+            padding:10px 12px;
+            border:2px solid var(--input-border);
+            border-radius:12px;
+            font-size:.9rem;
+            outline:none;
+            background:var(--input-bg);
+            color:var(--text);
+            height:44px;
+        }
+        .comments-overlay-footer .comment-form .form-row input:focus{
             border-color:var(--primary);
-            color:var(--primary);
-            transform:rotate(180deg);
         }
-        .refresh-btn:active{
-            transform:rotate(360deg);
+        .comments-overlay-footer .comment-form .form-row textarea{
+            flex:1;
+            padding:10px 12px;
+            border:2px solid var(--input-border);
+            border-radius:12px;
+            font-size:.9rem;
+            outline:none;
+            background:var(--input-bg);
+            color:var(--text);
+            resize:vertical;
+            min-height:44px;
+            max-height:120px;
+            line-height:1.5;
+            font-family:inherit;
+        }
+        .comments-overlay-footer .comment-form .form-row textarea:focus{
+            border-color:var(--primary);
+        }
+        .comments-overlay-footer .comment-form .form-row button{
+            flex-shrink:0;
+            width:44px;
+            height:44px;
+            border-radius:12px;
+            background:var(--primary);
+            color:#fff;
+            border:none;
+            cursor:pointer;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:1.1rem;
+            transition:all .2s;
+        }
+        .comments-overlay-footer .comment-form .form-row button:hover{
+            background:var(--primary-hover);
+        }
+        .comments-overlay-footer .comment-form .form-row button:disabled{
+            background:#b2bec3;
+            cursor:not-allowed;
+        }
+
+        @keyframes commentAppear{
+            0%{opacity:0;transform:translateY(-10px)}
+            100%{opacity:1;transform:translateY(0)}
+        }
+        .comment-item{
+            animation:commentAppear .3s ease;
+        }
+
+        @media (max-width: 480px) {
+            .comments-overlay-footer .comment-form .form-row{
+                flex-wrap:wrap;
+            }
+            .comments-overlay-footer .comment-form .form-row input{
+                flex:1 1 100%;
+            }
+            .comments-overlay-footer .comment-form .form-row textarea{
+                flex:1 1 calc(100% - 52px);
+                min-height:50px;
+            }
+            .comments-overlay-footer .comment-form .form-row button{
+                width:48px;
+                height:48px;
+            }
         }
     </style>
 </head>
@@ -273,9 +810,12 @@
                 <span class="select-icon">▼</span>
             </div>
             
-            <!-- ✅ Bouton Refresh pour réorganiser aléatoirement -->
             <button class="refresh-btn" onclick="reshuffleJokes()" title="Réorganiser les blagues">
                 <i class="fa-solid fa-rotate"></i>
+            </button>
+            
+            <button class="dark-mode-btn" id="darkModeBtn" onclick="toggleDarkMode()" title="Mode sombre/clair">
+                <i class="fa-solid fa-moon"></i>
             </button>
             
             <button class="admin-header-btn" id="adminToggleBtn" onclick="toggleAdminMode()" title="Mode Admin">
@@ -284,7 +824,7 @@
         </div>
     </div>
     <div class="header-marquee-wrapper">
-        <div class="header-marquee-content">👋 Bienvenue sur NokatApp le site de l'humour et de rires 😂</div>
+        <div class="header-marquee-content">👋 Bienvenue sur NokatApp, le site de l'humour et de rires 😂</div>
     </div>
 </header>
 
@@ -301,15 +841,14 @@
     <div class="extra-bottom-space"></div>
 </main>
 
-<div class="fab-add" onclick="openCustomModal()">
-    <i class="fa-solid fa-plus"></i>
-</div>
+<div class="fab-add" onclick="openCustomModal()"><i class="fa-solid fa-plus"></i></div>
 
 <footer class="fixed-footer">
-    <div class="footer-credit">Créé par : <strong>M.Seddik ELidrissi</strong></div>
     <div class="site-showcase" id="siteShowcase"></div>
+    <div class="footer-credit">Créé par : <strong>M.Seddik ELidrissi</strong></div>
 </footer>
 
+<!-- Modal Ajout Blague -->
 <div class="custom-modal-overlay" id="addJokeModal">
     <div class="custom-modal-content">
         <button class="modal-close-btn" onclick="closeCustomModal()"><i class="fa-solid fa-xmark"></i></button>
@@ -333,37 +872,155 @@
     </div>
 </div>
 
+<!-- Overlay Commentaires -->
+<div class="comments-overlay" id="commentsOverlay">
+    <div class="comments-overlay-header">
+        <h5><i class="fa-solid fa-comment-dots"></i> <span id="commentsOverlayTitle">Commentaires</span></h5>
+        <button class="comments-overlay-close" onclick="closeCommentsOverlay()">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+    <div class="comments-overlay-body" id="commentsOverlayBody"></div>
+    <div class="comments-overlay-footer">
+        <div class="comment-form">
+            <div class="form-row">
+                <input type="text" id="overlayCname" placeholder="Votre nom" maxlength="20">
+                <textarea id="overlayCtext" placeholder="Votre commentaire..." rows="2"></textarea>
+                <button onclick="submitOverlayComment()" title="Envoyer">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 // =============================================
 // 🔧 REMPLACER PAR VOTRE URL APPS SCRIPT
 // =============================================
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzFHjSvctuyY9dW6LcPgXaR1RXTIpWJlFbpRRmuE-rZXqXopxJxJ_D15F6hK52elHZcA/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzBBq7hLKzYsRKKoW_b5DgzSbRpUFJ5bwO34eOyHdakY3yhZmmJxbB-ZgIKYl4SN9JJ5Q/exec";
 // =============================================
 
 const ADMIN_PASSWORD = "Seddik";
 const MY_LIKES_KEY = 'nokat_my_likes';
+const SHUFFLE_ORDER_KEY = 'nokat_shuffle_order';
+const DARK_MODE_KEY = 'nokat_dark_mode';
 let isAdminMode = false;
 let allJokes = [];
 let currentFilter = 'all';
+let currentCommentsJokeId = null;
 
-function getMyLikes() { return JSON.parse(localStorage.getItem(MY_LIKES_KEY) || '{}'); }
-function setMyLike(id, liked) {
-    const myLikes = getMyLikes();
-    myLikes[id] = liked;
-    localStorage.setItem(MY_LIKES_KEY, JSON.stringify(myLikes));
+// Dark Mode
+function toggleDarkMode() {
+    const html = document.documentElement;
+    const btn = document.getElementById('darkModeBtn');
+    const icon = btn.querySelector('i');
+    
+    if (html.getAttribute('data-theme') === 'dark') {
+        html.removeAttribute('data-theme');
+        localStorage.setItem(DARK_MODE_KEY, 'light');
+        icon.className = 'fa-solid fa-moon';
+        btn.classList.remove('active');
+    } else {
+        html.setAttribute('data-theme', 'dark');
+        localStorage.setItem(DARK_MODE_KEY, 'dark');
+        icon.className = 'fa-solid fa-sun';
+        btn.classList.add('active');
+    }
 }
 
-// ✅ Mélange aléatoire simple et efficace
-function shuffleArray(arr) {
-    const shuffled = [...arr];
-    // Algorithme de Fisher-Yates
-    for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+function loadDarkModePreference() {
+    const saved = localStorage.getItem(DARK_MODE_KEY);
+    const html = document.documentElement;
+    const btn = document.getElementById('darkModeBtn');
+    const icon = btn.querySelector('i');
+    
+    if (saved === 'dark') {
+        html.setAttribute('data-theme', 'dark');
+        icon.className = 'fa-solid fa-sun';
+        btn.classList.add('active');
+    } else {
+        html.removeAttribute('data-theme');
+        icon.className = 'fa-solid fa-moon';
+        btn.classList.remove('active');
     }
+}
+
+// Format date
+function formatDate(dateStr) {
+    if (!dateStr) return '';
+    try {
+        const date = new Date(dateStr);
+        if (isNaN(date.getTime())) return '';
+        const jour = String(date.getDate()).padStart(2, '0');
+        const mois = String(date.getMonth() + 1).padStart(2, '0');
+        const annee = date.getFullYear();
+        return `${jour}/${mois}/${annee}`;
+    } catch(e) {
+        return '';
+    }
+}
+
+function timeAgo(dateStr) {
+    if (!dateStr) return '';
+    try {
+        const now = new Date();
+        const date = new Date(dateStr);
+        if (isNaN(date.getTime())) return '';
+        
+        const diff = Math.floor((now - date) / 1000);
+        if (diff < 60) return 'À l\'instant';
+        if (diff < 3600) return Math.floor(diff / 60) + ' min';
+        if (diff < 86400) return Math.floor(diff / 3600) + 'h';
+        if (diff < 604800) return Math.floor(diff / 86400) + 'j';
+        return formatDate(dateStr);
+    } catch(e) {
+        return '';
+    }
+}
+
+function getMyLikes() { return JSON.parse(localStorage.getItem(MY_LIKES_KEY) || '{}'); }
+function setMyLike(id, liked) { const l = getMyLikes(); l[id] = liked; localStorage.setItem(MY_LIKES_KEY, JSON.stringify(l)); }
+
+function shuffleWithMemory(jokes) {
+    const savedOrder = localStorage.getItem(SHUFFLE_ORDER_KEY);
+    const jokeIds = jokes.map(j => String(j.id));
+    
+    if (savedOrder) {
+        try {
+            const savedIds = JSON.parse(savedOrder);
+            const allMatch = jokeIds.every(id => savedIds.includes(id)) && 
+                            savedIds.every(id => jokeIds.includes(id));
+            if (allMatch && savedIds.length === jokeIds.length) {
+                const shuffled = [];
+                savedIds.forEach(id => {
+                    const joke = jokes.find(j => String(j.id) === String(id));
+                    if (joke) shuffled.push(joke);
+                });
+                jokes.forEach(j => {
+                    if (!shuffled.some(s => String(s.id) === String(j.id))) {
+                        shuffled.push(j);
+                    }
+                });
+                return shuffled;
+            }
+        } catch(e) {}
+    }
+    
+    const shuffled = shuffleArray(jokes);
+    localStorage.setItem(SHUFFLE_ORDER_KEY, JSON.stringify(shuffled.map(j => String(j.id))));
     return shuffled;
+}
+
+function shuffleArray(arr) {
+    const s = [...arr];
+    for (let i = s.length - 1; i > 0; i--) { 
+        const j = Math.floor(Math.random() * (i + 1)); 
+        [s[i], s[j]] = [s[j], s[i]]; 
+    }
+    return s;
 }
 
 function detectLanguage(text) {
@@ -414,26 +1071,34 @@ function filterJokes(lang) {
     }
 }
 
-// ✅ Fonction pour réorganiser aléatoirement
 function reshuffleJokes() {
     if (allJokes.length === 0) return;
     
-    // Mélanger les blagues
     const shuffled = shuffleArray(allJokes);
+    localStorage.setItem(SHUFFLE_ORDER_KEY, JSON.stringify(shuffled.map(j => String(j.id))));
     
-    // Reconstruire l'affichage avec le nouvel ordre
+    renderJokes(shuffled);
+    
+    Swal.fire({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 1200,
+        background: '#6c5ce7',
+        color: '#fff',
+        icon: 'info',
+        title: '🔄 Blagues réorganisées !'
+    });
+}
+
+function renderJokes(jokes) {
     const container = document.getElementById('jokesContainer');
     const empty = document.getElementById('emptyState');
     const myLikes = getMyLikes();
     
-    // Garder le compteur et le loading
-    const resultCounter = document.getElementById('resultCounter');
-    
-    // Supprimer toutes les cartes existantes (sauf loading et empty)
     document.querySelectorAll('.joke-card').forEach(el => el.remove());
     
-    // Ajouter les nouvelles cartes dans l'ordre mélangé
-    shuffled.forEach((j, index) => {
+    jokes.forEach((j, index) => {
         const id = String(j.id);
         const hasLiked = !!myLikes[id];
         const icon = hasLiked ? 'fa-solid' : 'fa-regular';
@@ -441,6 +1106,8 @@ function reshuffleJokes() {
         const likesCount = parseInt(j.likes) || 0;
         const text = String(j.text || '');
         const lang = detectLanguage(text);
+        const comments = Array.isArray(j.comments) ? j.comments : [];
+        const commentCount = comments.length;
 
         const card = document.createElement('div');
         card.className = `joke-card reordering`;
@@ -454,30 +1121,27 @@ function reshuffleJokes() {
             <div class="joke-text">${escapeHtml(text)}</div>
             <div class="joke-meta">
                 <span class="author-badge"><i class="fa-solid fa-user-pen"></i> ${escapeHtml(String(j.author || 'Anonyme'))}</span>
-                <span class="like-btn ${likedClass}" onclick="toggleLike('${id}', this)">
-                    <i class="${icon} fa-heart"></i> <span>${likesCount}</span>
-                </span>
+                <div style="display:flex;gap:8px;align-items:center">
+                    <button class="comments-toggle" onclick="openCommentsOverlay('${id}')">
+                        <i class="fa-solid fa-comment-dots"></i> ${commentCount}
+                    </button>
+                    <span class="like-btn ${likedClass}" onclick="toggleLike('${id}', this)">
+                        <i class="${icon} fa-heart"></i> <span>${likesCount}</span>
+                    </span>
+                </div>
             </div>
         `;
         
-        // Insérer avant le emptyState
         container.insertBefore(card, empty);
     });
     
-    // Mettre à jour le compteur
     filterJokes(currentFilter);
     
-    // Notification
-    Swal.fire({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 1200,
-        background: '#6c5ce7',
-        color: '#fff',
-        icon: 'info',
-        title: '🔄 Blagues réorganisées !'
-    });
+    setTimeout(() => {
+        document.querySelectorAll('.joke-card.reordering').forEach(el => {
+            el.classList.remove('reordering');
+        });
+    }, 500);
 }
 
 async function loadJokes() {
@@ -501,117 +1165,125 @@ async function loadJokes() {
             return;
         }
 
-        // ✅ Mélanger aléatoirement à chaque chargement
-        const shuffled = shuffleArray(jokes);
         empty.style.display = 'none';
         document.getElementById('resultCounter').style.display = 'block';
 
-        container.innerHTML = shuffled.map((j, index) => {
-            const id = String(j.id);
-            const hasLiked = !!myLikes[id];
-            const icon = hasLiked ? 'fa-solid' : 'fa-regular';
-            const likedClass = hasLiked ? 'liked' : '';
-            const likesCount = parseInt(j.likes) || 0;
-            const text = String(j.text || '');
-            const lang = detectLanguage(text);
-
-            return `
-                <div class="joke-card reordering" id="joke-${id}" data-lang="${lang}" data-index="${index}">
-                    <button class="admin-delete-btn" onclick="deleteJoke('${id}')" title="Supprimer">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
-                    <div class="joke-text">${escapeHtml(text)}</div>
-                    <div class="joke-meta">
-                        <span class="author-badge"><i class="fa-solid fa-user-pen"></i> ${escapeHtml(String(j.author || 'Anonyme'))}</span>
-                        <span class="like-btn ${likedClass}" onclick="toggleLike('${id}', this)">
-                            <i class="${icon} fa-heart"></i> <span>${likesCount}</span>
-                        </span>
-                    </div>
-                </div>`;
-        }).join('');
-
-        container.appendChild(empty);
-        filterJokes(currentFilter);
-        
-        setTimeout(() => {
-            document.querySelectorAll('.joke-card.reordering').forEach(el => {
-                el.classList.remove('reordering');
-            });
-        }, 500);
+        const shuffled = shuffleWithMemory(jokes);
+        renderJokes(shuffled);
         
     } catch (err) {
-        loading.innerHTML = `<i class="fa-solid fa-triangle-exclamation fa-2x mb-3 text-danger"></i><p>Erreur de chargement.<br>Vérifiez l'URL du script.</p>`;
+        loading.innerHTML = `<i class="fa-solid fa-triangle-exclamation fa-2x mb-3 text-danger"></i><p>Erreur de chargement.</p>`;
         console.error(err);
     }
 }
 
-async function toggleLike(id, el) {
-    const myLikes = getMyLikes();
-    const hasLiked = !!myLikes[id];
-    const action = hasLiked ? 'unlike' : 'like';
-
-    const icon = el.querySelector('i');
-    const countSpan = el.querySelector('span');
-    let currentCount = parseInt(countSpan.textContent) || 0;
-
-    if (!hasLiked) {
-        el.classList.add('liked');
-        icon.className = 'fa-solid fa-heart';
-        countSpan.textContent = currentCount + 1;
-        setMyLike(id, true);
+function openCommentsOverlay(jokeId) {
+    currentCommentsJokeId = jokeId;
+    const overlay = document.getElementById('commentsOverlay');
+    const body = document.getElementById('commentsOverlayBody');
+    const title = document.getElementById('commentsOverlayTitle');
+    
+    const joke = allJokes.find(j => String(j.id) === jokeId);
+    if (!joke) return;
+    
+    const comments = Array.isArray(joke.comments) ? joke.comments : [];
+    title.textContent = `💬 ${comments.length} commentaire(s)`;
+    
+    if (comments.length === 0) {
+        body.innerHTML = `<div class="no-comments">Aucun commentaire pour le moment</div>`;
     } else {
-        el.classList.remove('liked');
-        icon.className = 'fa-regular fa-heart';
-        countSpan.textContent = Math.max(0, currentCount - 1);
-        setMyLike(id, false);
+        body.innerHTML = comments.map((c, idx) => `
+            <div class="comment-item">
+                <button class="comment-delete-btn" onclick="deleteCommentFromDB('${jokeId}', ${idx})" title="Supprimer">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+                <span class="comment-name">${escapeHtml(c.name)}</span>
+                <span class="comment-date">${timeAgo(c.date)}</span>
+                <div class="comment-text">${escapeHtml(c.text)}</div>
+            </div>
+        `).join('');
     }
+    
+    document.getElementById('overlayCname').value = '';
+    document.getElementById('overlayCtext').value = '';
+    
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => document.getElementById('overlayCname').focus(), 300);
+}
+
+function closeCommentsOverlay() {
+    document.getElementById('commentsOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+    currentCommentsJokeId = null;
+}
+
+// ✅ AJOUTER UN COMMENTAIRE
+async function submitOverlayComment() {
+    if (!currentCommentsJokeId) return;
+    
+    const nameInput = document.getElementById('overlayCname');
+    const textInput = document.getElementById('overlayCtext');
+    const name = nameInput.value.trim();
+    const text = textInput.value.trim();
+
+    if (!name || !text) {
+        Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2000, background: '#ff4757', color: '#fff', icon: 'warning', title: 'Remplissez le nom et le commentaire !' });
+        return;
+    }
+
+    const body = document.getElementById('commentsOverlayBody');
+    const noComments = body.querySelector('.no-comments');
+    if (noComments) noComments.remove();
+
+    const now = new Date().toISOString();
+    const newCommentHTML = `
+        <div class="comment-item" style="animation:commentAppear .3s ease">
+            <span class="comment-name">${escapeHtml(name)}</span>
+            <span class="comment-date">À l'instant</span>
+            <div class="comment-text">${escapeHtml(text)}</div>
+        </div>`;
+    body.insertAdjacentHTML('beforeend', newCommentHTML);
+
+    const toggleBtn = document.querySelector(`#joke-${currentCommentsJokeId} .comments-toggle`);
+    if (toggleBtn) {
+        const currentCount = parseInt(toggleBtn.textContent.trim()) || 0;
+        toggleBtn.innerHTML = `<i class="fa-solid fa-comment-dots"></i> ${currentCount + 1}`;
+    }
+    
+    const title = document.getElementById('commentsOverlayTitle');
+    const currentCount = parseInt(title.textContent.match(/\d+/)?.[0] || 0);
+    title.textContent = `💬 ${currentCount + 1} commentaire(s)`;
+
+    const joke = allJokes.find(j => String(j.id) === currentCommentsJokeId);
+    if (joke) {
+        if (!joke.comments) joke.comments = [];
+        joke.comments.push({ name, text, date: now });
+    }
+
+    nameInput.value = '';
+    textInput.value = '';
+    nameInput.focus();
 
     try {
         await fetch(SCRIPT_URL, {
             method: 'POST', mode: 'no-cors',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action, id })
+            body: JSON.stringify({ action: 'comment', id: currentCommentsJokeId, name, text })
         });
-    } catch (err) { console.error('Like error:', err); }
+    } catch (err) { console.error('Comment error:', err); }
 }
 
-function toggleAdminMode() {
-    if (isAdminMode) {
-        isAdminMode = false;
-        document.body.classList.remove('admin-mode');
-        document.getElementById('adminToggleBtn').classList.remove('active');
-        Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1500, background: '#2d3436', color: '#fff', icon: 'info', title: 'Mode Admin désactivé' });
-    } else {
-        Swal.fire({
-            title: '🔒 Espace Admin',
-            input: 'password',
-            inputLabel: 'Mot de passe',
-            inputPlaceholder: 'Entrez le mot de passe',
-            confirmButtonText: 'Accéder',
-            confirmButtonColor: '#6c5ce7',
-            cancelButtonText: 'Annuler',
-            showCancelButton: true,
-            inputValidator: (value) => {
-                if (!value) return 'Le mot de passe est requis !';
-                if (value !== ADMIN_PASSWORD) return 'Mot de passe incorrect !';
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                isAdminMode = true;
-                document.body.classList.add('admin-mode');
-                document.getElementById('adminToggleBtn').classList.add('active');
-                Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2000, background: '#00b894', color: '#fff', icon: 'success', title: 'Mode Admin activé ✅' });
-            }
-        });
+// ✅ SUPPRIMER UN COMMENTAIRE DIRECTEMENT DE LA BASE DE DONNÉES
+async function deleteCommentFromDB(jokeId, commentIndex) {
+    if (!isAdminMode) {
+        Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2000, background: '#ff6b6b', color: '#fff', icon: 'warning', title: '🔒 Activez le mode Admin d\'abord' });
+        return;
     }
-}
-
-async function deleteJoke(id) {
-    if (!isAdminMode) return;
 
     const result = await Swal.fire({
-        title: 'Supprimer cette blague ?',
-        text: "Cette action est irréversible !",
+        title: '🗑️ Supprimer ce commentaire ?',
+        text: "Cette action est irréversible et supprimera le commentaire de la base de données !",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#ff4757',
@@ -622,29 +1294,109 @@ async function deleteJoke(id) {
 
     if (result.isConfirmed) {
         try {
+            // Envoyer la requête de suppression au serveur
             await fetch(SCRIPT_URL, {
-                method: 'POST', mode: 'no-cors',
+                method: 'POST',
+                mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'delete', id })
+                body: JSON.stringify({ 
+                    action: 'deleteComment', 
+                    jokeId: jokeId, 
+                    commentIndex: commentIndex 
+                })
             });
-
-            const card = document.getElementById(`joke-${id}`);
-            if (card) {
-                card.style.transition = 'all 0.4s ease';
-                card.style.opacity = '0';
-                card.style.transform = 'scale(0.8)';
-                setTimeout(() => {
-                    card.remove();
-                    // Mettre à jour la liste allJokes
-                    allJokes = allJokes.filter(j => String(j.id) !== id);
-                    filterJokes(currentFilter);
-                }, 400);
+            
+            // Supprimer localement
+            const joke = allJokes.find(j => String(j.id) === jokeId);
+            if (joke && joke.comments) {
+                joke.comments.splice(commentIndex, 1);
             }
-
-            Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2000, background: '#ff4757', color: '#fff', icon: 'success', title: 'Blague supprimée ! 🗑️' });
-        } catch (err) {
-            Swal.fire({ icon: 'error', title: 'Erreur', text: 'Impossible de supprimer.' });
+            
+            // Recharger l'overlay
+            openCommentsOverlay(jokeId);
+            
+            // Mettre à jour le compteur
+            const toggleBtn = document.querySelector(`#joke-${jokeId} .comments-toggle`);
+            if (toggleBtn) {
+                const newCount = joke ? joke.comments.length : 0;
+                toggleBtn.innerHTML = `<i class="fa-solid fa-comment-dots"></i> ${newCount}`;
+            }
+            
+            Swal.fire({ 
+                toast: true, 
+                position: 'top-end', 
+                showConfirmButton: false, 
+                timer: 2000, 
+                background: '#00b894', 
+                color: '#fff', 
+                icon: 'success', 
+                title: '✅ Commentaire supprimé de la base de données !' 
+            });
+            
+        } catch (err) { 
+            console.error('Erreur lors de la suppression:', err);
+            Swal.fire({ 
+                toast: true, 
+                position: 'top-end', 
+                showConfirmButton: false, 
+                timer: 3000, 
+                background: '#ff4757', 
+                color: '#fff', 
+                icon: 'error', 
+                title: '❌ Erreur lors de la suppression' 
+            });
         }
+    }
+}
+
+async function toggleLike(id, el) {
+    const myLikes = getMyLikes();
+    const hasLiked = !!myLikes[id];
+    const action = hasLiked ? 'unlike' : 'like';
+    const icon = el.querySelector('i');
+    const countSpan = el.querySelector('span');
+    let currentCount = parseInt(countSpan.textContent) || 0;
+
+    if (!hasLiked) { el.classList.add('liked'); icon.className = 'fa-solid fa-heart'; countSpan.textContent = currentCount + 1; setMyLike(id, true); }
+    else { el.classList.remove('liked'); icon.className = 'fa-regular fa-heart'; countSpan.textContent = Math.max(0, currentCount - 1); setMyLike(id, false); }
+
+    try { await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action, id }) }); }
+    catch (err) { console.error(err); }
+}
+
+function toggleAdminMode() {
+    if (isAdminMode) {
+        isAdminMode = false; document.body.classList.remove('admin-mode');
+        document.getElementById('adminToggleBtn').classList.remove('active');
+        Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1500, background: '#2d3436', color: '#fff', icon: 'info', title: 'Mode Admin désactivé' });
+    } else {
+        Swal.fire({ title: '🔒 Espace Admin', input: 'password', inputLabel: 'Mot de passe', confirmButtonText: 'Accéder', confirmButtonColor: '#6c5ce7', cancelButtonText: 'Annuler', showCancelButton: true,
+            inputValidator: (v) => { if (!v) return 'Requis !'; if (v !== ADMIN_PASSWORD) return 'Incorrect !'; }
+        }).then((r) => {
+            if (r.isConfirmed) {
+                isAdminMode = true; document.body.classList.add('admin-mode');
+                document.getElementById('adminToggleBtn').classList.add('active');
+                Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2000, background: '#00b894', color: '#fff', icon: 'success', title: 'Mode Admin activé ✅' });
+            }
+        });
+    }
+}
+
+async function deleteJoke(id) {
+    if (!isAdminMode) return;
+    const r = await Swal.fire({ title: 'Supprimer cette blague ?', text: "Irréversible !", icon: 'warning', showCancelButton: true, confirmButtonColor: '#ff4757', cancelButtonColor: '#b2bec3', confirmButtonText: 'Oui, supprimer', cancelButtonText: 'Annuler' });
+    if (r.isConfirmed) {
+        try {
+            await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'delete', id }) });
+            const card = document.getElementById(`joke-${id}`);
+            if (card) { card.style.transition = 'all 0.4s ease'; card.style.opacity = '0'; card.style.transform = 'scale(0.8)'; setTimeout(() => card.remove(), 400); }
+            allJokes = allJokes.filter(j => String(j.id) !== id);
+            const savedOrder = JSON.parse(localStorage.getItem(SHUFFLE_ORDER_KEY) || '[]');
+            const newOrder = savedOrder.filter(savedId => savedId !== id);
+            localStorage.setItem(SHUFFLE_ORDER_KEY, JSON.stringify(newOrder));
+            filterJokes(currentFilter);
+            Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2000, background: '#ff4757', color: '#fff', icon: 'success', title: 'Blague supprimée ! 🗑️' });
+        } catch (err) { Swal.fire({ icon: 'error', title: 'Erreur' }); }
     }
 }
 
@@ -653,39 +1405,20 @@ async function submitJoke() {
     const author = document.getElementById('modalAuthor').value.trim();
     const joke = document.getElementById('modalJoke').value.trim();
     let valid = true;
-
-    if (!author) {
-        document.getElementById('authorError').style.display = 'block';
-        document.getElementById('modalAuthor').style.borderColor = '#ff4757';
-        valid = false;
-    }
-    if (joke.length < 10) {
-        document.getElementById('jokeError').style.display = 'block';
-        document.getElementById('modalJoke').style.borderColor = '#ff4757';
-        valid = false;
-    }
+    if (!author) { document.getElementById('authorError').style.display = 'block'; document.getElementById('modalAuthor').style.borderColor = '#ff4757'; valid = false; }
+    if (joke.length < 10) { document.getElementById('jokeError').style.display = 'block'; document.getElementById('modalJoke').style.borderColor = '#ff4757'; valid = false; }
     if (!valid) return;
 
-    const btn = document.getElementById('submitBtn');
-    const originalHTML = btn.innerHTML;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Envoi...';
-    btn.disabled = true;
-
+    const btn = document.getElementById('submitBtn'); const orig = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Envoi...'; btn.disabled = true;
     try {
-        await fetch(SCRIPT_URL, {
-            method: 'POST', mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: joke, author })
-        });
+        await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: joke, author }) });
         closeCustomModal();
+        localStorage.removeItem(SHUFFLE_ORDER_KEY);
         Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2500, background: '#2d3436', color: '#fff', icon: 'success', title: 'Blague publiée ! 🎉' });
         setTimeout(loadJokes, 2000);
-    } catch (err) {
-        Swal.fire({ icon: 'error', title: 'Erreur', text: "Impossible d'envoyer." });
-    } finally {
-        btn.innerHTML = originalHTML;
-        btn.disabled = false;
-    }
+    } catch (err) { Swal.fire({ icon: 'error', title: 'Erreur' }); }
+    finally { btn.innerHTML = orig; btn.disabled = false; }
 }
 
 const sitesAmis = [
@@ -696,17 +1429,13 @@ const sitesAmis = [
 ];
 let currentSiteIndex = 0;
 const showcase = document.getElementById('siteShowcase');
-
 function cycleSites() {
-    const oldEl = showcase.querySelector('.site-item-animated');
-    if (oldEl) { oldEl.classList.remove('enter'); oldEl.classList.add('exit'); setTimeout(() => oldEl.remove(), 500); }
-    const site = sitesAmis[currentSiteIndex];
-    const el = document.createElement('a');
-    el.href = site.url; el.target = '_blank'; el.rel = 'noopener noreferrer';
-    el.className = `site-item-animated ${site.anim} enter`;
-    el.textContent = site.name;
-    showcase.appendChild(el);
-    currentSiteIndex = (currentSiteIndex + 1) % sitesAmis.length;
+    const old = showcase.querySelector('.site-item-animated');
+    if (old) { old.classList.remove('enter'); old.classList.add('exit'); setTimeout(() => old.remove(), 500); }
+    const s = sitesAmis[currentSiteIndex];
+    const el = document.createElement('a'); el.href = s.url; el.target = '_blank'; el.rel = 'noopener noreferrer';
+    el.className = `site-item-animated ${s.anim} enter`; el.textContent = s.name;
+    showcase.appendChild(el); currentSiteIndex = (currentSiteIndex + 1) % sitesAmis.length;
 }
 
 function openCustomModal() { document.getElementById('addJokeModal').classList.add('active'); document.body.style.overflow = 'hidden'; setTimeout(() => document.getElementById('modalAuthor').focus(), 350); }
@@ -715,10 +1444,18 @@ function hideErrors() { document.querySelectorAll('.error-msg').forEach(el => el
 function escapeHtml(t) { if(!t) return ""; const d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadJokes();
-    cycleSites();
+    loadDarkModePreference();
+    loadJokes(); 
+    cycleSites(); 
     setInterval(cycleSites, 3000);
     document.getElementById('addJokeModal').addEventListener('click', function(e) { if(e.target === this) closeCustomModal(); });
+    
+    document.getElementById('overlayCtext').addEventListener('keydown', function(e) {
+        if ((e.key === 'Enter' && (e.ctrlKey || e.shiftKey)) || (e.key === 'Enter' && this.value.length > 20)) {
+            e.preventDefault();
+            submitOverlayComment();
+        }
+    });
 });
 </script>
 </body>
