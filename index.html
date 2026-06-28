@@ -25,16 +25,83 @@
             box-shadow:0 2px 15px rgba(0,0,0,.05);
             height:var(--hh);
             display:flex;flex-direction:column;justify-content:center;
-            padding:0 15px;
+            padding:0 12px;
         }
-        .header-top-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
-        .header-logo{font-weight:800;color:var(--primary);font-size:1.1rem;white-space:nowrap;display:flex;align-items:center;gap:8px}
+        .header-top-row{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:6px;
+            margin-bottom:2px;
+        }
+        .header-logo{
+            font-weight:800;
+            color:var(--primary);
+            font-size:1.1rem;
+            white-space:nowrap;
+            display:flex;
+            align-items:center;
+            gap:8px;
+            flex-shrink:0;
+            cursor:default;
+        }
+        .header-logo i{font-size:1.2rem;}
+
+        /* ✅ Mini select pour les filtres (petite icône) */
+        .filter-mini-wrapper{
+            position:relative;
+            flex-shrink:0;
+            display:flex;
+            align-items:center;
+            gap:4px;
+        }
+        .filter-mini-wrapper select{
+            padding:4px 24px 4px 8px;
+            border:2px solid #dfe6e9;
+            border-radius:20px;
+            background:transparent;
+            font-size:.75rem;
+            font-weight:600;
+            color:#2d3436;
+            cursor:pointer;
+            appearance:none;
+            -webkit-appearance:none;
+            transition:all .3s;
+            height:32px;
+            width:70px;
+            min-width:70px;
+        }
+        .filter-mini-wrapper select:focus{
+            outline:none;
+            border-color:var(--primary);
+        }
+        .filter-mini-wrapper select option{
+            padding:6px;
+            font-weight:500;
+            font-size:.8rem;
+        }
+        .filter-mini-wrapper .select-icon{
+            position:absolute;
+            right:6px;
+            top:50%;
+            transform:translateY(-50%);
+            color:#b2bec3;
+            pointer-events:none;
+            font-size:.7rem;
+            font-weight:900;
+        }
+        .filter-mini-wrapper select:hover{
+            border-color:var(--primary);
+        }
+        .filter-mini-wrapper select:focus + .select-icon{
+            color:var(--primary);
+        }
 
         .admin-header-btn{
             background:none;border:2px solid #dfe6e9;color:#b2bec3;
-            width:36px;height:36px;border-radius:50%;
+            width:32px;height:32px;border-radius:50%;
             display:flex;align-items:center;justify-content:center;
-            font-size:.9rem;cursor:pointer;transition:all .3s;flex-shrink:0;
+            font-size:.8rem;cursor:pointer;transition:all .3s;flex-shrink:0;
         }
         .admin-header-btn:hover{border-color:var(--primary);color:var(--primary)}
         .admin-header-btn.active{
@@ -44,7 +111,7 @@
         @keyframes pulseAdmin{0%,100%{box-shadow:0 0 0 0 rgba(255,71,87,.4)}50%{box-shadow:0 0 0 8px rgba(255,71,87,0)}}
 
         .header-marquee-wrapper{width:100%;overflow:hidden;white-space:nowrap}
-        .header-marquee-content{display:inline-block;font-size:.8rem;font-weight:500;color:#636e72;animation:passAndReset 10s linear infinite}
+        .header-marquee-content{display:inline-block;font-size:.75rem;font-weight:500;color:#636e72;animation:passAndReset 10s linear infinite}
         @keyframes passAndReset{0%{transform:translateX(100vw);opacity:0}3%{opacity:1}90%{transform:translateX(-100%);opacity:1}95%{transform:translateX(-100%);opacity:0}100%{transform:translateX(100vw);opacity:0}}
 
         /* --- Footer & Sites Amis --- */
@@ -63,24 +130,51 @@
         @keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes fadeOut{from{opacity:1}to{opacity:0}}
 
         /* --- Blagues --- */
-        .joke-card{background:var(--card);border-radius:18px;padding:22px;margin-bottom:16px;box-shadow:0 4px 20px rgba(0,0,0,.04);border:1px solid rgba(0,0,0,.03);position:relative}
+        .joke-card{
+            background:var(--card);
+            border-radius:18px;
+            padding:22px;
+            margin-bottom:16px;
+            box-shadow:0 4px 20px rgba(0,0,0,.04);
+            border:1px solid rgba(0,0,0,.03);
+            position:relative;
+            transition:all .3s ease;
+        }
+        .joke-card.hidden{
+            display:none;
+        }
         .joke-text{
             font-size:1.05rem;
             line-height:1.8;
             margin-bottom:15px;
             word-wrap:break-word;
             white-space:pre-wrap;
-            text-align:justify;        /* ✅ Justification du texte */
-            text-justify:inter-word;   /* ✅ Meilleure justification pour les mots */
-            direction:auto;            /* ✅ Détection automatique RTL/LTR */
-            unicode-bidi:plaintext;    /* ✅ Gestion automatique de l'écriture arabe */
+            text-align:justify;
+            text-justify:inter-word;
+            direction:auto;
+            unicode-bidi:plaintext;
         }
-        .joke-meta{display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px dashed #eee}
+        .joke-meta{display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px dashed #eee;flex-wrap:wrap;gap:8px}
         .author-badge{background:#f0efff;color:var(--primary);padding:5px 14px;border-radius:20px;font-size:.85rem;font-weight:600}
         .like-btn{cursor:pointer;padding:8px 16px;border-radius:20px;background:#f8f9fa;user-select:none;transition:all .3s}
         .like-btn.liked{background:#ffeef0;color:#ff4757!important}
         .like-btn.liked i{animation:heartPop .4s ease}
         @keyframes heartPop{0%{transform:scale(1)}50%{transform:scale(1.4)}100%{transform:scale(1)}}
+
+        .lang-badge{
+            position:absolute;
+            top:12px;
+            right:50px;
+            font-size:.65rem;
+            padding:2px 10px;
+            border-radius:12px;
+            font-weight:600;
+            opacity:.6;
+            background:#f1f2f6;
+            color:#636e72;
+        }
+        .lang-badge.ar{background:#e8f5e9;color:#2e7d32;}
+        .lang-badge.fr{background:#e3f2fd;color:#0d47a1;}
 
         .admin-delete-btn{position:absolute;top:12px;right:12px;background:none;border:none;color:#b2bec3;font-size:1rem;cursor:pointer;padding:5px 8px;border-radius:8px;transition:all .2s;display:none}
         .admin-delete-btn:hover{color:#ff4757;background:#ffeef0}
@@ -90,15 +184,15 @@
             position:fixed;
             bottom:calc(var(--fh) + 20px);
             right:20px;
-            width:60px;
-            height:60px;
+            width:56px;
+            height:56px;
             background:linear-gradient(135deg,#6c5ce7,#a29bfe);
             color:#fff;
             border-radius:50%;
             display:flex;
             align-items:center;
             justify-content:center;
-            font-size:26px;
+            font-size:24px;
             box-shadow:0 6px 25px rgba(108,92,231,.4);
             cursor:pointer;
             z-index:1001;
@@ -128,16 +222,54 @@
         .submit-btn-custom{width:100%;padding:15px;background:linear-gradient(135deg,var(--primary),#a29bfe);color:#fff;border:none;border-radius:14px;font-size:1.05rem;font-weight:700;cursor:pointer;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:10px}
         .error-msg{color:#ff4757;font-size:.8rem;margin-top:6px;display:none;font-weight:600}
         .loading-spinner{text-align:center;padding:40px;color:#b2bec3}
+
+        .result-counter{
+            font-size:.85rem;
+            color:#b2bec3;
+            padding:8px 0 12px;
+            text-align:center;
+            font-weight:500;
+        }
+        .result-counter span{
+            color:var(--primary);
+            font-weight:700;
+        }
+
+        .joke-card.reordering{
+            animation:reorderPop .4s ease;
+        }
+        @keyframes reorderPop{
+            0%{transform:scale(0.95);opacity:0.5}
+            50%{transform:scale(1.02)}
+            100%{transform:scale(1);opacity:1}
+        }
     </style>
 </head>
 <body>
 
 <header class="fixed-header">
     <div class="header-top-row">
-        <div class="header-logo"><i class="fa-solid fa-face-laugh-squint"></i> NokatApp</div>
-        <button class="admin-header-btn" id="adminToggleBtn" onclick="toggleAdminMode()" title="Mode Admin">
-            <i class="fa-solid fa-shield-halved"></i>
-        </button>
+        <!-- ✅ Logo complet -->
+        <div class="header-logo">
+            <i class="fa-solid fa-face-laugh-squint"></i> 
+            <span>NokatApp</span>
+        </div>
+        
+        <!-- ✅ Mini select avec icône + Bouton Admin -->
+        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+            <div class="filter-mini-wrapper">
+                <select id="filterSelect" onchange="filterJokes(this.value)">
+                    <option value="all">🌐</option>
+                    <option value="fr">🇫🇷</option>
+                    <option value="ar">🇸🇦</option>
+                </select>
+                <span class="select-icon">▼</span>
+            </div>
+            
+            <button class="admin-header-btn" id="adminToggleBtn" onclick="toggleAdminMode()" title="Mode Admin">
+                <i class="fa-solid fa-shield-halved"></i>
+            </button>
+        </div>
     </div>
     <div class="header-marquee-wrapper">
         <div class="header-marquee-content">👋 Bienvenue sur NokatApp le site de l'humour et de rires 😂</div>
@@ -145,6 +277,7 @@
 </header>
 
 <main class="container px-3" id="jokesContainer">
+    <div class="result-counter" id="resultCounter">📊 <span id="countDisplay">0</span> blague(s) affichée(s)</div>
     <div class="loading-spinner" id="loadingState">
         <i class="fa-solid fa-spinner fa-spin fa-2x mb-3"></i>
         <p>Chargement des blagues...</p>
@@ -199,13 +332,56 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzFHjSvctuyY9dW6LcP
 
 const ADMIN_PASSWORD = "Seddik";
 const MY_LIKES_KEY = 'nokat_my_likes';
+const SHUFFLE_ORDER_KEY = 'nokat_shuffle_order';
 let isAdminMode = false;
+let allJokes = [];
+let currentFilter = 'all';
+let currentShuffledIds = [];
+
+function getShuffledOrder() {
+    try {
+        const saved = localStorage.getItem(SHUFFLE_ORDER_KEY);
+        return saved ? JSON.parse(saved) : null;
+    } catch { return null; }
+}
+
+function saveShuffledOrder(order) {
+    localStorage.setItem(SHUFFLE_ORDER_KEY, JSON.stringify(order));
+}
 
 function getMyLikes() { return JSON.parse(localStorage.getItem(MY_LIKES_KEY) || '{}'); }
 function setMyLike(id, liked) {
     const myLikes = getMyLikes();
     myLikes[id] = liked;
     localStorage.setItem(MY_LIKES_KEY, JSON.stringify(myLikes));
+}
+
+function shuffleWithMemory(jokes) {
+    const savedOrder = getShuffledOrder();
+    const jokeIds = jokes.map(j => String(j.id));
+    
+    if (savedOrder && savedOrder.length === jokeIds.length) {
+        const savedIds = savedOrder.map(id => String(id));
+        const allMatch = jokeIds.every(id => savedIds.includes(id)) && 
+                        savedIds.every(id => jokeIds.includes(id));
+        if (allMatch) {
+            const shuffled = [];
+            savedOrder.forEach(id => {
+                const joke = jokes.find(j => String(j.id) === String(id));
+                if (joke) shuffled.push(joke);
+            });
+            jokes.forEach(j => {
+                if (!shuffled.some(s => String(s.id) === String(j.id))) {
+                    shuffled.push(j);
+                }
+            });
+            return shuffled;
+        }
+    }
+    
+    const shuffled = shuffleArray(jokes);
+    saveShuffledOrder(shuffled.map(j => String(j.id)));
+    return shuffled;
 }
 
 function shuffleArray(arr) {
@@ -215,6 +391,70 @@ function shuffleArray(arr) {
         [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
     return shuffled;
+}
+
+function detectLanguage(text) {
+    if (!text) return 'unknown';
+    const arabicPattern = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+    const textSample = text.substring(0, 200);
+    const arabicChars = (textSample.match(/[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/g) || []).length;
+    const totalChars = textSample.replace(/\s/g, '').length;
+    if (totalChars === 0) return 'unknown';
+    const ratio = arabicChars / totalChars;
+    return ratio > 0.3 ? 'ar' : 'fr';
+}
+
+function filterJokes(lang) {
+    currentFilter = lang;
+    document.getElementById('filterSelect').value = lang;
+    
+    const cards = document.querySelectorAll('.joke-card');
+    let visibleCount = 0;
+    
+    cards.forEach((card, index) => {
+        if (lang === 'all') {
+            card.classList.remove('hidden');
+            visibleCount++;
+        } else {
+            const langAttr = card.dataset.lang;
+            if (langAttr === lang) {
+                card.classList.remove('hidden');
+                visibleCount++;
+            } else {
+                card.classList.add('hidden');
+            }
+        }
+    });
+    
+    document.getElementById('countDisplay').textContent = visibleCount;
+    
+    const emptyState = document.getElementById('emptyState');
+    if (visibleCount === 0 && allJokes.length > 0) {
+        emptyState.style.display = 'block';
+        const langName = lang === 'fr' ? 'français' : 'arabe';
+        emptyState.innerHTML = `
+            <i class="fa-regular fa-comment-dots fa-3x mb-3 opacity-50"></i>
+            <p>Aucune blague en ${langName} pour le moment.<br>
+            <small class="text-muted">Essayez un autre filtre</small></p>
+        `;
+    } else {
+        emptyState.style.display = 'none';
+    }
+}
+
+function reshuffleJokes() {
+    localStorage.removeItem(SHUFFLE_ORDER_KEY);
+    loadJokes();
+    Swal.fire({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 1500,
+        background: '#6c5ce7',
+        color: '#fff',
+        icon: 'info',
+        title: '🔄 Blagues réorganisées !'
+    });
 }
 
 async function loadJokes() {
@@ -228,30 +468,38 @@ async function loadJokes() {
         const myLikes = getMyLikes();
 
         loading.style.display = 'none';
+        allJokes = jokes || [];
 
         if (!jokes || jokes.length === 0) {
             container.innerHTML = '';
             container.appendChild(empty);
             empty.style.display = 'block';
+            document.getElementById('resultCounter').style.display = 'none';
             return;
         }
 
-        const shuffled = shuffleArray(jokes);
+        const shuffled = shuffleWithMemory(jokes);
         empty.style.display = 'none';
+        document.getElementById('resultCounter').style.display = 'block';
 
-        container.innerHTML = shuffled.map(j => {
+        container.innerHTML = shuffled.map((j, index) => {
             const id = String(j.id);
             const hasLiked = !!myLikes[id];
             const icon = hasLiked ? 'fa-solid' : 'fa-regular';
             const likedClass = hasLiked ? 'liked' : '';
             const likesCount = parseInt(j.likes) || 0;
+            const text = String(j.text || '');
+            const lang = detectLanguage(text);
+            const langLabel = lang === 'ar' ? '🇸🇦 عربي' : '🇫🇷 Français';
+            const langClass = lang === 'ar' ? 'ar' : 'fr';
 
             return `
-                <div class="joke-card" id="joke-${id}">
+                <div class="joke-card reordering" id="joke-${id}" data-lang="${lang}" data-index="${index}">
+                    <span class="lang-badge ${langClass}">${langLabel}</span>
                     <button class="admin-delete-btn" onclick="deleteJoke('${id}')" title="Supprimer">
                         <i class="fa-solid fa-trash-can"></i>
                     </button>
-                    <div class="joke-text">${escapeHtml(String(j.text || ''))}</div>
+                    <div class="joke-text">${escapeHtml(text)}</div>
                     <div class="joke-meta">
                         <span class="author-badge"><i class="fa-solid fa-user-pen"></i> ${escapeHtml(String(j.author || 'Anonyme'))}</span>
                         <span class="like-btn ${likedClass}" onclick="toggleLike('${id}', this)">
@@ -262,6 +510,14 @@ async function loadJokes() {
         }).join('');
 
         container.appendChild(empty);
+        filterJokes(currentFilter);
+        
+        setTimeout(() => {
+            document.querySelectorAll('.joke-card.reordering').forEach(el => {
+                el.classList.remove('reordering');
+            });
+        }, 500);
+        
     } catch (err) {
         loading.innerHTML = `<i class="fa-solid fa-triangle-exclamation fa-2x mb-3 text-danger"></i><p>Erreur de chargement.<br>Vérifiez l'URL du script.</p>`;
         console.error(err);
@@ -356,7 +612,10 @@ async function deleteJoke(id) {
                 card.style.transition = 'all 0.4s ease';
                 card.style.opacity = '0';
                 card.style.transform = 'scale(0.8)';
-                setTimeout(() => card.remove(), 400);
+                setTimeout(() => {
+                    card.remove();
+                    filterJokes(currentFilter);
+                }, 400);
             }
 
             Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2000, background: '#ff4757', color: '#fff', icon: 'success', title: 'Blague supprimée ! 🗑️' });
@@ -396,6 +655,7 @@ async function submitJoke() {
             body: JSON.stringify({ text: joke, author })
         });
         closeCustomModal();
+        localStorage.removeItem(SHUFFLE_ORDER_KEY);
         Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2500, background: '#2d3436', color: '#fff', icon: 'success', title: 'Blague publiée ! 🎉' });
         setTimeout(loadJokes, 2000);
     } catch (err) {
@@ -437,6 +697,24 @@ document.addEventListener('DOMContentLoaded', () => {
     cycleSites();
     setInterval(cycleSites, 3000);
     document.getElementById('addJokeModal').addEventListener('click', function(e) { if(e.target === this) closeCustomModal(); });
+    
+    document.querySelector('.header-logo').addEventListener('dblclick', function(e) {
+        e.preventDefault();
+        if (isAdminMode) {
+            reshuffleJokes();
+        } else {
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 1500,
+                background: '#ff6b6b',
+                color: '#fff',
+                icon: 'warning',
+                title: '🔒 Activez le mode Admin d\'abord'
+            });
+        }
+    });
 });
 </script>
 </body>
